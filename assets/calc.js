@@ -1,16 +1,14 @@
 /* Калькулятор «полис или надбавка» для ипотеки Сбербанка.
    Оценки премий откалиброваны по реальным расчётам партнёрских платформ
    (Pampadu, Polis812) от 04.09.2026: Сбербанк, остаток 3 000 000 ₽,
-   мужчина 27 лет — от 3 900 ₽ (жизнь + имущество), мужчина 40 лет — от 6 600 ₽.
+   мужчина 27 лет — от 3 900 ₽ (жизнь + квартира), мужчина 40 лет — от 6 600 ₽.
    Остальные возраста — интерполяция; точную цену показывает партнёрский калькулятор. */
 
 // ЕДИНСТВЕННОЕ МЕСТО, ГДЕ МЕНЯЕТСЯ ПАРТНЁРСКАЯ ССЫЛКА.
-// Вставьте ссылку из кабинета Pampadu («Вебмастеру → Витрины и виджеты»)
-// или Polis812 («Инструменты → Конструктор ссылок»).
 const PARTNER_URL = "https://polis812.ru/mortgage?params=YmFua19pZD0xJm9iamVjdF90eXBlPWZsYXQmZmlsdGVyPWFsbCZ1c2VyX2Zyb209bGlua2Vy&partnerId=212866&utm_source=godovshchina&utm_medium=site&utm_term=mortgage&utm_campaign=sber";
 
-const RATE_PROPERTY = 0.0005; // конструктив: ~1 500 ₽ на 3 000 000 ₽
-const CAPTIVE_MARKUP = 1.5;   // полис у банка дороже независимой СК на 30–60 % → берём 50 %
+const RATE_PROPERTY = 0.0005; // страховка квартиры: ~1 500 ₽ на 3 000 000 ₽
+const CAPTIVE_MARKUP = 1.5;   // полис у банка дороже страховой из списка на 30–60 % → берём 50 %
 
 function lifeRate(age, sex) {
   // годовая ставка страхования жизни, доля от остатка; якоря: 27 → 0,08 %, 40 → 0,17 %
@@ -28,56 +26,75 @@ function lifeRate(age, sex) {
 }
 
 const fmt = n => Math.round(n).toLocaleString("ru-RU") + " ₽";
+const digits = s => Number(String(s).replace(/\D/g, "")) || 0;
+
+function readBalance() {
+  return Math.max(0, digits(document.getElementById("balance").value));
+}
 
 function calc() {
-  const balance = Math.max(0, Number(document.getElementById("balance").value) || 0);
+  const balance = readBalance();
   const age = Math.min(70, Math.max(18, Number(document.getElementById("age").value) || 35));
   const sex = document.querySelector("#sex [aria-pressed=true]").dataset.v;
-  const uplift = Number(document.getElementById("uplift").value); // п.п.
+  const uplift = Number(document.getElementById("uplift").value); // проценты к ставке
 
   const declineCost = balance * uplift / 100;
   const independent = balance * (lifeRate(age, sex) + RATE_PROPERTY);
   const captive = independent * CAPTIVE_MARKUP;
-
   const max = Math.max(declineCost, independent, captive, 1);
+
   const set = (id, v) => {
     const el = document.getElementById(id);
     el.querySelector(".v").textContent = fmt(v);
     el.querySelector(".fill").style.width = (v / max * 100).toFixed(1) + "%";
     el.classList.remove("best", "worst");
   };
-  set("b-decline", declineCost);
-  set("b-captive", captive);
-  set("b-indep", independent);
+  set("r-decline", declineCost);
+  set("r-captive", captive);
+  set("r-indep", independent);
 
+  const big = document.getElementById("big");
   const verdict = document.getElementById("verdict");
-  const saving = document.getElementById("saving");
-  const cheapest = Math.min(declineCost, independent);
+  const k = document.getElementById("big-k");
+
   if (independent <= declineCost) {
-    document.getElementById("b-indep").classList.add("best");
-    document.getElementById("b-decline").classList.add("worst");
-    verdict.className = "verdict buy";
-    verdict.textContent = "Полис выгоднее отказа — но не у банка.";
-    saving.innerHTML = "Против отказа от страховки вы экономите <span class=\"num\">" + fmt(declineCost - independent) +
-      "</span> в год, против полиса банка — около <span class=\"num\">" + fmt(captive - independent) +
-      "</span>. За 10 лет ипотеки разница с банком — порядка <span class=\"num\">" + fmt((captive - independent) * 10) + "</span>.";
+    document.getElementById("r-indep").classList.add("best");
+    document.getElementById("r-decline").classList.add("worst");
+    big.className = "big";
+    k.textContent = "Ваша экономия в год";
+    big.textContent = fmt(declineCost - independent);
+    verdict.innerHTML = "Полис выгоднее отказа — но не в банке. Против полиса банка экономия ещё около <span class=\"num\">" +
+      fmt(captive - independent) + "</span> в год, за 10 лет ипотеки — порядка <span class=\"num\">" + fmt((captive - independent) * 10) + "</span>.";
   } else {
-    document.getElementById("b-decline").classList.add("best");
-    document.getElementById("b-captive").classList.add("worst");
-    verdict.className = "verdict skip";
-    verdict.textContent = "В вашем случае отказ от страхования жизни дешевле полиса.";
-    saving.innerHTML = "Надбавка к ставке обойдётся в <span class=\"num\">" + fmt(declineCost) +
-      "</span> в год — это меньше, чем даже самый дешёвый полис (<span class=\"num\">" + fmt(independent) +
-      "</span>). Проверьте точную цену: у некоторых страховых для вашего возраста она может оказаться ниже.";
+    document.getElementById("r-decline").classList.add("best");
+    document.getElementById("r-captive").classList.add("worst");
+    big.className = "big skip";
+    k.textContent = "Отказ дешевле полиса на";
+    big.textContent = fmt(independent - declineCost);
+    verdict.textContent = "В вашем случае надбавка к ставке обходится дешевле даже самого недорогого полиса. Проверьте точную цену — для некоторых возрастов страховые дают ниже нашей оценки.";
   }
-  void cheapest;
+}
+
+function formatBalanceField(el) {
+  const n = digits(el.value);
+  el.value = n ? n.toLocaleString("ru-RU") : "";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   // партнёрская ссылка проставляется на любой странице, калькулятор — только там, где он есть
   document.querySelectorAll("a[data-partner]").forEach(a => { a.href = PARTNER_URL; });
   if (!document.getElementById("calc")) return;
-  ["balance", "age", "uplift"].forEach(id => document.getElementById(id).addEventListener("input", calc));
+
+  const balance = document.getElementById("balance");
+  const range = document.getElementById("balance-range");
+  formatBalanceField(balance);
+  balance.addEventListener("input", () => { if (range) range.value = readBalance(); calc(); });
+  balance.addEventListener("blur", () => formatBalanceField(balance));
+  if (range) {
+    range.value = readBalance();
+    range.addEventListener("input", () => { balance.value = Number(range.value).toLocaleString("ru-RU"); calc(); });
+  }
+  ["age", "uplift"].forEach(id => document.getElementById(id).addEventListener("input", calc));
   document.querySelectorAll("#sex button").forEach(b => b.addEventListener("click", () => {
     document.querySelectorAll("#sex button").forEach(x => x.setAttribute("aria-pressed", "false"));
     b.setAttribute("aria-pressed", "true");

@@ -16,7 +16,7 @@
 <meta name="yandex-verification" content="91ee931dc425b640">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=IBM+Plex+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/style.css?v=2">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Можно ли отказаться от страхования жизни по ипотеке Сбербанка?","acceptedAnswer":{"@type":"Answer","text":"Да, страхование жизни добровольное. Но по условиям Сбербанка при отказе ставка по кредиту повышается на 1–1,5 процентного пункта. На остатке 2 млн рублей это 20–30 тысяч рублей переплаты в год — обычно больше, чем стоит полис у аккредитованной страховой."}},
@@ -44,20 +44,22 @@
   <div class="wrap grid">
     <div>
       <div class="eyebrow">Добровольно по закону · платно по факту</div>
-      <h1 style="margin-top:10px">Страхование жизни для ипотеки Сбербанка: отказаться или купить дешевле</h1>
-      <p class="lede" style="margin-top:14px">Отказ разрешён, но стоит +1–1,5 п.п. к ставке. Полис в банке дороже, чем у аккредитованных компаний, на 30–60 %. Третий вариант почти всегда выигрывает — проверьте на своих цифрах.</p>
+      <h1 style="margin-top:10px">Страхование жизни для ипотеки Сбербанка: отказаться или купить дешевле?</h1>
+      <p class="lede" style="margin-top:12px">Отказаться можно, но ставка вырастет на 1–1,5 %. Полис в банке дороже, чем у страховых из его списка, на 30–60 %. Третий вариант почти всегда выигрывает — проверьте на своих цифрах.</p>
       <div class="facts">
-        <div class="fact"><div class="v">≈ 70–80 %</div><div class="l">цены ипотечной страховки — это жизнь, не квартира</div></div>
-        <div class="fact"><div class="v">2,5×</div><div class="l">разброс цен между компаниями для одного человека</div></div>
-        <div class="fact"><div class="v">каждый год</div><div class="l">можно менять компанию при продлении</div></div>
+        <div class="fact"><b>70–80 %</b> цены страховки — это жизнь</div>
+        <div class="fact">разброс цен <b>до 2,5×</b></div>
+        <div class="fact">менять страховую можно <b>каждый год</b></div>
       </div>
     </div>
 
     <form class="calc" id="calc" onsubmit="return false" aria-labelledby="calc-title">
       <h2 id="calc-title">Что дешевле для вас</h2>
+      <p class="sub">Три цифры и ответ — за минуту, без регистрации.</p>
       <div class="row">
         <label class="full">Остаток по кредиту, ₽
-          <input type="number" id="balance" value="2150000" min="100000" step="50000" inputmode="numeric">
+          <input type="text" id="balance" value="2150000" inputmode="numeric" autocomplete="off">
+          <input type="range" id="balance-range" min="300000" max="15000000" step="50000" value="2150000" aria-label="Остаток по кредиту">
         </label>
         <label>Возраст заёмщика
           <input type="number" id="age" value="38" min="18" max="70" inputmode="numeric">
@@ -68,24 +70,29 @@
             <button type="button" data-v="f" aria-pressed="false">Женский</button>
           </div>
         </label>
-        <label class="full">Надбавка к ставке при отказе
+        <label class="full">Надбавка к ставке, если отказаться от страховки жизни
           <select id="uplift">
-            <option value="1" selected>+1 п.п. — стандартные условия Сбербанка</option>
-            <option value="1.5">+1,5 п.п. — если так указано в вашем договоре</option>
+            <option value="1" selected>+1 % — как обычно у Сбербанка</option>
+            <option value="1.5">+1,5 % — если так написано в вашем договоре</option>
           </select>
         </label>
       </div>
       <div class="result" aria-live="polite">
-        <p class="verdict buy" id="verdict">Полис выгоднее отказа — но не у банка.</p>
-        <div class="bars">
-          <div class="bar" id="b-decline"><span>Отказ: переплата по ставке за год</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
-          <div class="bar" id="b-captive"><span>Полис в СберСтраховании (оценка)</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
-          <div class="bar" id="b-indep"><span>Полис у аккредитованной компании (оценка)</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+        <p class="k" id="big-k">Ваша экономия в год</p>
+        <p class="big" id="big">0 ₽</p>
+        <p class="verdict" id="verdict"></p>
+        <div class="rows">
+          <div class="rw" id="r-decline"><span>Отказаться от страховки</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+          <div class="rw" id="r-captive"><span>Полис в банке</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+          <div class="rw" id="r-indep"><span>Полис у страховой из списка банка</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
         </div>
-        <div class="saving" id="saving"></div>
-        <a class="cta" data-partner href="#PARTNER_LINK" rel="nofollow sponsored">Показать реальные цены по возрасту →</a>
+        <a class="cta" data-partner href="#PARTNER_LINK" rel="nofollow sponsored">Показать точные цены по возрасту →</a>
+        <p class="trust"><span class="ad">Реклама</span>Расчёт на сайте партнёра Полис812. Цена та же, что напрямую в страховой; полис принимает Сбербанк, загружается в ДомКлик.</p>
       </div>
-      <p class="note">Оценка по расчётам аккредитованных компаний на 4 сентября 2026 г. Точная цена зависит от возраста, пола, профессии и состояния здоровья — её покажет расчёт по кнопке.</p>
+      <details class="how">
+        <summary>Как мы считаем</summary>
+        <p>Оценка, не оферта. Ставки откалиброваны по реальным расчётам страховых на 4 сентября 2026 г. Точная цена зависит от возраста, пола, профессии и здоровья — её покажет расчёт по кнопке.</p>
+      </details>
     </form>
   </div>
 </section>
@@ -144,7 +151,7 @@
   </div>
 </footer>
 
-<script src="../assets/calc.js?v=3"></script>
+<script src="../assets/calc.js?v=4"></script>
 <script src="../assets/metrika.js"></script>
 </body>
 </html>

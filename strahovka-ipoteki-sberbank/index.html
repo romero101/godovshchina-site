@@ -16,7 +16,7 @@
 <meta name="yandex-verification" content="91ee931dc425b640">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=IBM+Plex+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/style.css?v=2">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Обязана ли я страховать жизнь по ипотеке Сбербанка?","acceptedAnswer":{"@type":"Answer","text":"Нет. По закону обязательно только страхование самой квартиры (залога). Страхование жизни добровольное, но при отказе Сбербанк повышает ставку на 1–1,5 процентного пункта. Поэтому вопрос не «нужно ли», а «что дешевле» — это и считает калькулятор."}},
@@ -45,20 +45,22 @@
   <div class="wrap grid">
     <div>
       <div class="eyebrow">Ипотека Сбербанка · продление и первый год</div>
-      <h1 style="margin-top:10px">Страховка ипотеки в Сбербанке: что выгоднее — полис или надбавка к ставке</h1>
-      <p class="lede" style="margin-top:14px">Банк обязан принять полис любой аккредитованной компании. У независимых страховых то же покрытие стоит на 30–60 % дешевле, чем у СберСтрахования. Посчитайте свой случай за минуту.</p>
+      <h1 style="margin-top:10px">Страховка ипотеки в Сбербанке: полис или надбавка к ставке?</h1>
+      <p class="lede" style="margin-top:12px">Отказ от страховки жизни стоит +1 % к ставке. Полис в банке — дороже, чем у страховых из его же списка, на 30–60 %. Посчитайте, что выгоднее именно вам.</p>
       <div class="facts">
-        <div class="fact"><div class="v">+1–1,5 п.п.</div><div class="l">надбавка к ставке за отказ от страхования жизни</div></div>
-        <div class="fact"><div class="v">от 3 900 ₽</div><div class="l">полис жизнь + квартира при остатке 3 млн ₽</div></div>
-        <div class="fact"><div class="v">14</div><div class="l">аккредитованных компаний с онлайн-оформлением</div></div>
+        <div class="fact"><b>+1–1,5 %</b> к ставке за отказ</div>
+        <div class="fact">полис <b>от 3 900 ₽</b> в год</div>
+        <div class="fact"><b>14</b> страховых онлайн</div>
       </div>
     </div>
 
     <form class="calc" id="calc" onsubmit="return false" aria-labelledby="calc-title">
-      <h2 id="calc-title">Полис или надбавка?</h2>
+      <h2 id="calc-title">Посчитайте свой случай</h2>
+      <p class="sub">Три цифры и ответ — за минуту, без регистрации.</p>
       <div class="row">
         <label class="full">Остаток по кредиту, ₽
-          <input type="number" id="balance" value="3000000" min="100000" step="50000" inputmode="numeric">
+          <input type="text" id="balance" value="3000000" inputmode="numeric" autocomplete="off">
+          <input type="range" id="balance-range" min="300000" max="15000000" step="50000" value="3000000" aria-label="Остаток по кредиту">
         </label>
         <label>Возраст заёмщика
           <input type="number" id="age" value="35" min="18" max="70" inputmode="numeric">
@@ -69,25 +71,30 @@
             <button type="button" data-v="f" aria-pressed="false">Женский</button>
           </div>
         </label>
-        <label class="full">Надбавка к ставке при отказе от страхования жизни
+        <label class="full">Надбавка к ставке, если отказаться от страховки жизни
           <select id="uplift">
-            <option value="1" selected>+1 п.п. — стандартные условия Сбербанка</option>
-            <option value="1.5">+1,5 п.п. — если так указано в вашем договоре</option>
+            <option value="1" selected>+1 % — как обычно у Сбербанка</option>
+            <option value="1.5">+1,5 % — если так написано в вашем договоре</option>
           </select>
         </label>
       </div>
 
       <div class="result" aria-live="polite">
-        <p class="verdict buy" id="verdict">Полис выгоднее отказа — но не у банка.</p>
-        <div class="bars">
-          <div class="bar" id="b-decline"><span>Отказ: переплата по ставке за год</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
-          <div class="bar" id="b-captive"><span>Полис в СберСтраховании (оценка)</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
-          <div class="bar" id="b-indep"><span>Полис у аккредитованной компании (оценка)</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+        <p class="k" id="big-k">Ваша экономия в год</p>
+        <p class="big" id="big">0 ₽</p>
+        <p class="verdict" id="verdict"></p>
+        <div class="rows">
+          <div class="rw" id="r-decline"><span>Отказаться от страховки</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+          <div class="rw" id="r-captive"><span>Полис в банке</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+          <div class="rw" id="r-indep"><span>Полис у страховой из списка банка</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
         </div>
-        <div class="saving" id="saving"></div>
-        <a class="cta" data-partner href="#PARTNER_LINK" rel="nofollow sponsored">Показать реальные цены 14 компаний →</a>
+        <a class="cta" data-partner href="#PARTNER_LINK" rel="nofollow sponsored">Показать точные цены 14 страховых →</a>
+        <p class="trust"><span class="ad">Реклама</span>Расчёт на сайте партнёра Полис812. Цена та же, что напрямую в страховой; полис принимает Сбербанк, загружается в ДомКлик.</p>
       </div>
-      <p class="note">Оценка. Ставки откалиброваны по реальным расчётам аккредитованных страховых на 4 сентября 2026 г. (Сбербанк, остаток 3 000 000 ₽: мужчина 27 лет — от 3 900 ₽, 40 лет — от 6 600 ₽ за жизнь и квартиру). Полис банка принят за +50 % к цене независимой компании. Точную цену для вашей квартиры и возраста покажет расчёт по кнопке.</p>
+      <details class="how">
+        <summary>Как мы считаем</summary>
+        <p>Оценка, не оферта. Ставки откалиброваны по реальным расчётам страховых на 4 сентября 2026 г.: Сбербанк, остаток 3 000 000 ₽, мужчина 27 лет — от 3 900 ₽, 40 лет — от 6 600 ₽ за жизнь и квартиру. Полис банка принят за +50 % к цене страховой из списка. Точную цену для вашей квартиры и возраста покажет расчёт по кнопке.</p>
+      </details>
     </form>
   </div>
 </section>
@@ -152,7 +159,7 @@
   </div>
 </footer>
 
-<script src="../assets/calc.js?v=3"></script>
+<script src="../assets/calc.js?v=4"></script>
 <script src="../assets/metrika.js"></script>
 </body>
 </html>
