@@ -63,8 +63,8 @@ function calc() {
     big.className = "big";
     k.textContent = "Ваша экономия в год";
     big.textContent = fmt(declineCost - independent);
-    verdict.innerHTML = "Полис выгоднее отказа — но не в банке. Против полиса банка экономия ещё около <span class=\"num\">" +
-      fmt(captive - independent) + "</span> в год, за 10 лет ипотеки — порядка <span class=\"num\">" + fmt((captive - independent) * 10) + "</span>.";
+    verdict.textContent = "Полис выгоднее отказа — но не в банке. Против полиса банка экономия ещё около " +
+      fmt(captive - independent) + " в год, за 10 лет ипотеки — порядка " + fmt((captive - independent) * 10) + ".";
   } else {
     document.getElementById("r-decline").classList.add("best");
     document.getElementById("r-captive").classList.add("worst");
