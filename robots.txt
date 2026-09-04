@@ -1,3 +1,35 @@
+# polis-godovshchina.ru — открыт для поисковых и ИИ-краулеров
+
 User-agent: *
 Allow: /
+
+# Поисковые системы
+User-agent: Yandex
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+# ИИ-поиск: разрешён, чтобы страницы могли цитироваться в ответах
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
 Sitemap: https://polis-godovshchina.ru/sitemap.xml
