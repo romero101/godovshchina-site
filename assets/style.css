@@ -53,7 +53,7 @@ strong{font-weight:700}
 .calc h2{margin:0 0 4px;font-size:20px}
 .calc .sub{font-size:14px;color:var(--muted);margin:0 0 14px}
 .calc .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.calc label{display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.calc label,.calc .field{display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:600;color:var(--ink)}
 .calc input,.calc select{font:inherit;font-size:18px;font-weight:400;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;width:100%}
 .calc input:hover,.calc select:hover{border-color:#B9C4D2}
 .calc input[inputmode=numeric]{font-family:var(--mono);font-variant-numeric:tabular-nums}

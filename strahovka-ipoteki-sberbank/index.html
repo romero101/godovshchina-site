@@ -16,7 +16,7 @@
 <meta name="yandex-verification" content="91ee931dc425b640">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=IBM+Plex+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="../assets/style.css?v=2">
+<link rel="stylesheet" href="../assets/style.css?v=3">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Обязана ли я страховать жизнь по ипотеке Сбербанка?","acceptedAnswer":{"@type":"Answer","text":"Нет. По закону обязательно только страхование самой квартиры (залога). Страхование жизни добровольное, но при отказе Сбербанк повышает ставку на 1–1,5 процентного пункта. Поэтому вопрос не «нужно ли», а «что дешевле» — это и считает калькулятор."}},
@@ -65,12 +65,12 @@
         <label>Возраст заёмщика
           <input type="number" id="age" value="35" min="18" max="70" inputmode="numeric">
         </label>
-        <label>Пол
-          <div class="seg" id="sex" role="group" aria-label="Пол">
+        <div class="field"><span class="lbl" id="sex-lbl">Пол</span>
+          <div class="seg" id="sex" role="group" aria-labelledby="sex-lbl">
             <button type="button" data-v="m" aria-pressed="true">Мужской</button>
             <button type="button" data-v="f" aria-pressed="false">Женский</button>
           </div>
-        </label>
+        </div>
         <label class="full">Надбавка к ставке, если отказаться от страховки жизни
           <select id="uplift">
             <option value="1" selected>+1 % — как обычно у Сбербанка</option>
@@ -79,7 +79,8 @@
         </label>
       </div>
 
-      <div class="result" aria-live="polite">
+      <noscript><p class="note">Калькулятору нужен JavaScript. Без него посмотрите пример ниже или сразу переходите к точным ценам по кнопке.</p></noscript>
+      <div class="result" aria-live="polite" aria-atomic="true">
         <p class="k" id="big-k">Ваша экономия в год</p>
         <p class="big" id="big">0 ₽</p>
         <p class="verdict" id="verdict"></p>
@@ -112,15 +113,15 @@
     <thead><tr><th>Вид страхования</th><th>По закону</th><th>На практике в Сбербанке</th><th class="n">Доля в цене</th></tr></thead>
     <tbody>
       <tr><td>Квартира (конструктив)</td><td>обязательно</td><td>без полиса кредит не выдадут и не продлят</td><td class="n">≈ 20–30 %</td></tr>
-      <tr><td>Жизнь и здоровье заёмщика</td><td>добровольно</td><td>без полиса ставка выше на 1–1,5 п.п.</td><td class="n">≈ 70–80 %</td></tr>
+      <tr><td>Жизнь и здоровье заёмщика</td><td>добровольно</td><td>без полиса ставка выше на 1–1,5 %</td><td class="n">≈ 70–80 %</td></tr>
       <tr><td>Титул (право собственности)</td><td>добровольно</td><td>обычно только первые 3 года на вторичке</td><td class="n">отдельно</td></tr>
     </tbody>
   </table></div>
   <p>Деньги — в страховании жизни. Именно его банк продаёт дороже всего и именно его выгоднее покупать у независимой компании.</p>
 
   <div class="callout">
-    <p><strong>Пример.</strong> Остаток 2 150 000 ₽ — средний по России. Отказ от страхования жизни при надбавке +1 п.п. — <span class="num">21 500 ₽</span> переплаты в год. Полис в СберСтраховании — около <span class="num">15 000 ₽</span>. Полис у аккредитованной компании — около <span class="num">9 000 ₽</span>.</p>
-    <p>Правильный ответ — покупать, но не у банка: минус <span class="num">6 000 ₽</span> в год и ниже ставка.</p>
+    <p><strong>Пример.</strong> Остаток 2 150 000 ₽ — средний по России. Отказ от страховки жизни при надбавке +1 % — <span class="num">21 500 ₽</span> переплаты в год. Полис в банке — около <span class="num">13 500 ₽</span>. Полис у страховой из списка банка — около <span class="num">9 000 ₽</span>.</p>
+    <p>Правильный ответ — покупать, но не у банка: минус <span class="num">4 500 ₽</span> в год против полиса банка и минус <span class="num">12 500 ₽</span> против отказа.</p>
   </div>
 
   <h2>Аккредитованные страховые Сбербанка с онлайн-оформлением</h2>
@@ -155,7 +156,7 @@
 <footer class="site-foot">
   <div class="wrap">
     <p>Годовщина — независимый сервис для заёмщиков. Мы не страховая компания и не банк: расчёт цен и оформление полисов выполняют аккредитованные страховые компании через партнёрскую платформу; за оформленный полис сервис получает вознаграждение от страховой, для вас цена не меняется.</p>
-    <p>ИНН и контакты: [заполнить — самозанятый / ИП] · <a href="../privacy/">Политика конфиденциальности</a>. Информация не является офертой; условия по вашему кредитному договору уточняйте в банке.</p>
+    <p><a href="../privacy/">Политика конфиденциальности</a>. Информация не является офертой; условия по вашему кредитному договору уточняйте в банке.</p>
   </div>
 </footer>
 
