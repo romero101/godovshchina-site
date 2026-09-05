@@ -18,3 +18,15 @@ const METRIKA_ID = 112294423; // счётчик «Годовщина», metrika.
     if (a) ym(METRIKA_ID, "reachGoal", "partner_click");
   }, true);
 })();
+
+// Уведомление о cookie: показываем один раз, закрытие запоминаем в localStorage.
+(function(){
+  try{ if(localStorage.getItem("cookie-ok")) return; }catch(e){}
+  function show(){
+    var n=document.createElement("div"); n.className="cookie-note"; n.setAttribute("role","status");
+    n.innerHTML='<span>Сайт использует cookie Яндекс Метрики для обезличенной статистики. <a href="/privacy/">Подробнее</a></span><button type="button">Понятно</button>';
+    n.querySelector("button").addEventListener("click",function(){ try{localStorage.setItem("cookie-ok","1");}catch(e){} n.remove(); });
+    document.body.appendChild(n);
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",show); else show();
+})();

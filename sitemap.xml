@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://polis-godovshchina.ru/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://polis-godovshchina.ru/strahovka-ipoteki-sberbank/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://polis-godovshchina.ru/strahovanie-zhizni-ipoteka-sberbank/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://polis-godovshchina.ru/akkreditovannye-strahovye-sberbank/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://polis-godovshchina.ru/kak-zagruzit-strahovku-v-domklik/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://polis-godovshchina.ru/</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://polis-godovshchina.ru/strahovka-ipoteki-sberbank/</loc><lastmod>2026-09-05</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://polis-godovshchina.ru/strahovanie-zhizni-ipoteka-sberbank/</loc><lastmod>2026-09-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://polis-godovshchina.ru/akkreditovannye-strahovye-sberbank/</loc><lastmod>2026-09-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://polis-godovshchina.ru/kak-zagruzit-strahovku-v-domklik/</loc><lastmod>2026-09-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
 </urlset>
