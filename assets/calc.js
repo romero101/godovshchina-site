@@ -5,7 +5,6 @@
    Остальные возраста — интерполяция; точную цену показывает партнёрский калькулятор. */
 
 // ЕДИНСТВЕННОЕ МЕСТО, ГДЕ МЕНЯЕТСЯ ПАРТНЁРСКАЯ ССЫЛКА.
-const POLIS812_URL = "https://polis812.ru/mortgage?params=YmFua19pZD0xJm9iamVjdF90eXBlPWZsYXQmZmlsdGVyPWFsbCZ1c2VyX2Zyb209bGlua2Vy&partnerId=212866&utm_source=godovshchina&utm_medium=site&utm_term=mortgage&utm_campaign=sber";
 
 const RATE_PROPERTY = 0.0005; // страховка квартиры: ~1 500 ₽ на 3 000 000 ₽
 const CAPTIVE_MARKUP = 1.5;   // полис у банка дороже страховой из списка на 30–60 % → берём 50 %
@@ -88,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
     a.href = onCalcPage ? "#oformit" : "/strahovka-ipoteki-sberbank/#oformit";
     a.removeAttribute("target");
   });
-  document.querySelectorAll("a[data-partner-alt]").forEach(a => { a.href = POLIS812_URL; });
   if (!document.getElementById("calc")) return;
 
   const balance = document.getElementById("balance");
