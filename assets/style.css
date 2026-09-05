@@ -105,6 +105,12 @@ th{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--mu
 tr:last-child td{border-bottom:0}
 td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 
+/* partner form */
+.pform{margin-top:18px}
+.pform input[type=date]{font-family:var(--body)}
+.pform .cta{width:100%;border:0;cursor:pointer}
+#wl-open{margin-top:0}
+
 /* on-site widget */
 .oformit{padding-top:28px}
 .oformit h2{margin-top:0}

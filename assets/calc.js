@@ -106,3 +106,45 @@ document.addEventListener("DOMContentLoaded", () => {
   }));
   calc();
 });
+
+// --- Форма партнёра: своя мгновенная форма → выдача Полис812 в новой вкладке ---
+(function(){
+  const form = document.getElementById("pform");
+  if (!form) return;
+  const PARTNER_ID = "212866", YM_ID = "112294423";
+  const bal = document.getElementById("p-balance"), dob = document.getElementById("p-dob"), err = document.getElementById("p-err");
+  const seg = document.getElementById("p-sex");
+  let sex = "m";
+  const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  const num = s => parseInt(String(s).replace(/\D/g, ""), 10) || 0;
+  // синхронизация с калькулятором выше
+  const mainBal = document.getElementById("balance"), mainSex = document.getElementById("sex");
+  if (mainBal) { bal.value = mainBal.value; mainBal.addEventListener("input", () => { bal.value = mainBal.value; }); }
+  if (mainSex) mainSex.addEventListener("click", ev => { const b = ev.target.closest("button[data-v]"); if (!b) return; sex = b.dataset.v; seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === sex)); });
+  seg.addEventListener("click", ev => { const b = ev.target.closest("button[data-v]"); if (!b) return; sex = b.dataset.v; seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === sex)); });
+  bal.addEventListener("blur", () => { const v = Math.min(50000000, Math.max(100000, num(bal.value))); bal.value = fmt(v); });
+  form.addEventListener("submit", ev => {
+    ev.preventDefault();
+    if (!dob.value) { err.hidden = false; dob.focus(); return; }
+    err.hidden = true;
+    const [y, m, d] = dob.value.split("-");
+    const q = "bank_id=1&debt=" + num(bal.value) + "&object_type=flat&sex=" + (sex === "f" ? "female" : "male") + "&dob=" + d + "." + m + "." + y + "&filter=all";
+    const params = btoa(unescape(encodeURIComponent(q)));
+    const url = "https://polis812.ru/mortgage/companies?params=" + encodeURIComponent(params) + "&partnerId=" + PARTNER_ID + "&partner=" + PARTNER_ID + "&partnerYmId=" + YM_ID + "&utm_source=godovshchina&utm_medium=site&utm_campaign=sber";
+    try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {}
+    window.open(url, "_blank", "noopener");
+  });
+  // окно партнёра — только по запросу
+  const openBtn = document.getElementById("wl-open"), frame = document.getElementById("wl-frame"), tpl = document.getElementById("wl-loader");
+  if (openBtn && frame && tpl) openBtn.addEventListener("click", () => {
+    openBtn.disabled = true; openBtn.textContent = "Загружаем окно партнёра…"; frame.hidden = false;
+    const src = tpl.content.querySelector("script");
+    const sc = document.createElement("script");
+    for (const a of src.attributes) sc.setAttribute(a.name, a.value);
+    frame.appendChild(sc);
+    // loader ждёт событие load страницы; оно уже прошло — дублируем его логику
+    setTimeout(() => { if (!frame.querySelector("iframe")) { const ev = new Event("load"); window.dispatchEvent(ev); } }, 300);
+    try { if (typeof ym === "function") ym(112294423, "reachGoal", "widget_open"); } catch (e) {}
+    const t = setInterval(() => { const f = frame.querySelector("iframe"); if (f) { clearInterval(t); const w = document.getElementById("wl-wait"); if (w) w.remove(); openBtn.hidden = true; } }, 500);
+  });
+})();
