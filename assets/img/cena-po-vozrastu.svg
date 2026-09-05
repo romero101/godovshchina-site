@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="720" height="300" role="img" aria-labelledby="t d">
+  <title id="t">Цена полиса «жизнь + квартира» по возрасту заёмщика при остатке 3 000 000 ₽</title>
+  <desc id="d">Самый дешёвый полис у страховой из списка Сбербанка: 27 лет — от 3 900 ₽ в год, 40 лет — от 6 600 ₽. Самый дорогой в том же расчёте для 40 лет — 16 263 ₽.</desc>
+  <rect width="720" height="300" fill="#F4F6F9" rx="14"/>
+  <text x="32" y="44" font-family="Manrope, 'IBM Plex Sans', Arial, sans-serif" font-size="20" font-weight="800" fill="#14213D">Сколько стоит полис «жизнь + квартира» при остатке 3 млн ₽</text>
+  <text x="32" y="68" font-family="'IBM Plex Sans', Arial, sans-serif" font-size="13" fill="#5C6B82">Реальные расчёты аккредитованных страховых, Сбербанк, мужчина, 4 сентября 2026 г.</text>
+  <g font-family="'IBM Plex Sans', Arial, sans-serif" font-size="15" fill="#14213D">
+    <text x="32" y="118">27 лет — самая низкая цена</text>
+    <rect x="32" y="126" width="134" height="18" rx="9" fill="#0B7A5B"/>
+    <text x="178" y="141" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="700" fill="#075C44">от 3 900 ₽</text>
+    <text x="32" y="184">40 лет — самая низкая цена</text>
+    <rect x="32" y="192" width="227" height="18" rx="9" fill="#0B7A5B"/>
+    <text x="271" y="207" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="700" fill="#075C44">от 6 600 ₽</text>
+    <text x="32" y="250">40 лет — самая высокая цена в том же расчёте</text>
+    <rect x="32" y="258" width="560" height="18" rx="9" fill="#B4530A"/>
+    <text x="604" y="273" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="500">16 263 ₽</text>
+  </g>
+</svg>

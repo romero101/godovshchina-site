@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="720" height="260" role="img" aria-labelledby="t d">
+  <title id="t">Разброс цен 14 аккредитованных страховых для одного заёмщика</title>
+  <desc id="d">Один расчёт: Сбербанк, остаток 3 000 000 ₽, мужчина 40 лет, жизнь и квартира. Самый дешёвый полис 6 600 ₽, самый дорогой 16 263 ₽ — разница в 2,5 раза, 9 663 ₽ в год.</desc>
+  <rect width="720" height="260" fill="#F4F6F9" rx="14"/>
+  <text x="32" y="44" font-family="Manrope, 'IBM Plex Sans', Arial, sans-serif" font-size="20" font-weight="800" fill="#14213D">Один заёмщик, одно покрытие, 14 страховых — цены в год</text>
+  <text x="32" y="68" font-family="'IBM Plex Sans', Arial, sans-serif" font-size="13" fill="#5C6B82">Сбербанк, остаток 3 000 000 ₽, мужчина 40 лет, жизнь + квартира. Расчёт 4 сентября 2026 г.</text>
+  <line x1="60" y1="150" x2="660" y2="150" stroke="#DDE3EC" stroke-width="10" stroke-linecap="round"/>
+  <line x1="60" y1="150" x2="660" y2="150" stroke="#0B7A5B" stroke-width="10" stroke-linecap="round" stroke-dasharray="1 0" opacity="0.15"/>
+  <g fill="#0B7A5B">
+    <circle cx="60" cy="150" r="9"/>
+    <circle cx="140" cy="150" r="5" opacity="0.6"/><circle cx="176" cy="150" r="5" opacity="0.6"/><circle cx="205" cy="150" r="5" opacity="0.6"/><circle cx="212" cy="150" r="5" opacity="0.6"/><circle cx="222" cy="150" r="5" opacity="0.6"/><circle cx="236" cy="150" r="5" opacity="0.6"/><circle cx="270" cy="150" r="5" opacity="0.6"/><circle cx="286" cy="150" r="5" opacity="0.6"/><circle cx="360" cy="150" r="5" opacity="0.6"/><circle cx="420" cy="150" r="5" opacity="0.6"/><circle cx="510" cy="150" r="5" opacity="0.6"/>
+  </g>
+  <circle cx="660" cy="150" r="9" fill="#B4530A"/>
+  <g font-family="'IBM Plex Mono', Menlo, monospace" font-size="16" font-weight="700">
+    <text x="60" y="122" text-anchor="middle" fill="#075C44">6 600 ₽</text>
+    <text x="660" y="122" text-anchor="middle" fill="#B4530A">16 263 ₽</text>
+  </g>
+  <g font-family="'IBM Plex Sans', Arial, sans-serif" font-size="14" fill="#5C6B82">
+    <text x="60" y="190" text-anchor="middle">самый дешёвый</text>
+    <text x="660" y="190" text-anchor="middle">самый дорогой</text>
+  </g>
+  <text x="360" y="230" text-anchor="middle" font-family="Manrope, 'IBM Plex Sans', Arial, sans-serif" font-size="17" font-weight="800" fill="#14213D">Разница — 9 663 ₽ в год, в 2,5 раза</text>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="720" height="300" role="img" aria-labelledby="t d">
+  <title id="t">Три сценария на остатке 2 150 000 ₽: отказ, полис в банке, полис у страховой из списка</title>
+  <desc id="d">Отказ от страховки жизни — 21 500 ₽ переплаты в год; полис в банке — около 13 500 ₽; полис у аккредитованной страховой — около 9 000 ₽.</desc>
+  <rect width="720" height="300" fill="#F4F6F9" rx="14"/>
+  <text x="32" y="44" font-family="Manrope, 'IBM Plex Sans', Arial, sans-serif" font-size="20" font-weight="800" fill="#14213D">Что вы платите в год на остатке 2 150 000 ₽</text>
+  <text x="32" y="68" font-family="'IBM Plex Sans', Arial, sans-serif" font-size="13" fill="#5C6B82">Оценка на 4 сентября 2026 г. Полис банка принят за +50 % к цене страховой из списка.</text>
+  <g font-family="'IBM Plex Sans', Arial, sans-serif" font-size="15" fill="#14213D">
+    <text x="32" y="118">Отказаться от страховки жизни (+1 % к ставке)</text>
+    <rect x="32" y="126" width="560" height="18" rx="9" fill="#B4530A"/>
+    <text x="604" y="141" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="500">21 500 ₽</text>
+    <text x="32" y="184">Полис в банке</text>
+    <rect x="32" y="192" width="352" height="18" rx="9" fill="#5C6B82"/>
+    <text x="396" y="207" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="500">≈ 13 500 ₽</text>
+    <text x="32" y="250" font-weight="700">Полис у страховой из списка банка</text>
+    <rect x="32" y="258" width="235" height="18" rx="9" fill="#0B7A5B"/>
+    <text x="279" y="273" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="700" fill="#075C44">≈ 9 000 ₽</text>
+  </g>
+</svg>

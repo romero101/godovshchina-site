@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" width="720" height="220" role="img" aria-labelledby="t d">
+  <title id="t">Как загрузить страховку в ДомКлик: три шага</title>
+  <desc id="d">Шаг 1: полис в PDF и чек приходят на e-mail после оплаты. Шаг 2: в ДомКлике открыть ипотеку, раздел страхования, «Загрузить полис», прикрепить оба файла. Шаг 3: проверка от нескольких часов до трёх рабочих дней.</desc>
+  <rect width="720" height="220" fill="#F4F6F9" rx="14"/>
+  <g font-family="'IBM Plex Sans', Arial, sans-serif">
+    <rect x="28" y="40" width="200" height="140" rx="12" fill="#FFFFFF" stroke="#DDE3EC"/>
+    <text x="48" y="72" font-family="Manrope, 'IBM Plex Sans', Arial, sans-serif" font-size="13" font-weight="800" fill="#075C44">ШАГ 1</text>
+    <text x="48" y="100" font-size="17" font-weight="700" fill="#14213D">Полис и чек</text>
+    <text x="48" y="126" font-size="14" fill="#5C6B82">два PDF приходят</text>
+    <text x="48" y="146" font-size="14" fill="#5C6B82">на e-mail после оплаты</text>
+    <path d="M236 110 h32" stroke="#0B7A5B" stroke-width="3" fill="none"/><path d="M262 102 l10 8 -10 8" stroke="#0B7A5B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="276" y="40" width="200" height="140" rx="12" fill="#FFFFFF" stroke="#DDE3EC"/>
+    <text x="296" y="72" font-family="Manrope, 'IBM Plex Sans', Arial, sans-serif" font-size="13" font-weight="800" fill="#075C44">ШАГ 2</text>
+    <text x="296" y="100" font-size="17" font-weight="700" fill="#14213D">«Загрузить полис»</text>
+    <text x="296" y="126" font-size="14" fill="#5C6B82">ДомКлик → ипотека →</text>
+    <text x="296" y="146" font-size="14" fill="#5C6B82">страхование, оба файла</text>
+    <path d="M484 110 h32" stroke="#0B7A5B" stroke-width="3" fill="none"/><path d="M510 102 l10 8 -10 8" stroke="#0B7A5B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="524" y="40" width="168" height="140" rx="12" fill="#FFFFFF" stroke="#DDE3EC"/>
+    <text x="544" y="72" font-family="Manrope, 'IBM Plex Sans', Arial, sans-serif" font-size="13" font-weight="800" fill="#075C44">ШАГ 3</text>
+    <text x="544" y="100" font-size="17" font-weight="700" fill="#14213D">Проверка</text>
+    <text x="544" y="126" font-size="14" fill="#5C6B82">от нескольких часов</text>
+    <text x="544" y="146" font-size="14" fill="#5C6B82">до 3 рабочих дней</text>
+  </g>
+  <text x="28" y="206" font-family="'IBM Plex Sans', Arial, sans-serif" font-size="13" fill="#5C6B82">Загружайте за 3–5 дней до окончания предыдущего полиса.</text>
+</svg>
