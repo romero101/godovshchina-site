@@ -105,6 +105,11 @@ th{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--mu
 tr:last-child td{border-bottom:0}
 td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 
+/* photos */
+.photo{margin:22px 0 26px}
+.photo img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:var(--radius)}
+.photo figcaption{font-size:13px;color:var(--muted);margin-top:8px}
+
 /* figures */
 .fig{margin:18px 0 22px;max-width:720px}
 .fig img{display:block;width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line)}
