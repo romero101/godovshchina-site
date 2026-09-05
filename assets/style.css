@@ -105,6 +105,12 @@ th{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--mu
 tr:last-child td{border-bottom:0}
 td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 
+/* on-site widget */
+.oformit{padding-top:28px}
+.oformit h2{margin-top:0}
+.widget-frame{margin:14px 0 10px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+.widget-frame iframe{display:block}
+
 /* photos */
 .photo{margin:22px 0 26px}
 .photo img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:var(--radius)}
