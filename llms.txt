@@ -13,3 +13,17 @@
 - [Политика конфиденциальности](https://polis-godovshchina.ru/privacy/)
 
 На странице калькулятора встроено окно партнёра для расчёта и покупки полиса без перехода на другой сайт.
+
+## Страницы по банкам (калькулятор «полис или надбавка», форма цен, куда передать полис)
+- https://polis-godovshchina.ru/banki/ — сводная таблица: надбавка за отказ от страховки жизни и куда передавать полис в 11 банках
+- https://polis-godovshchina.ru/strahovka-ipoteki-vtb/ — ВТБ (+1 п.п.)
+- https://polis-godovshchina.ru/strahovka-ipoteki-alfa-bank/ — Альфа-Банк (1–3 п.п.)
+- https://polis-godovshchina.ru/strahovka-ipoteki-sovcombank/ — Совкомбанк
+- https://polis-godovshchina.ru/strahovka-ipoteki-rosselhozbank/ — Россельхозбанк (1–2 п.п., до 3,5)
+- https://polis-godovshchina.ru/strahovka-ipoteki-t-bank/ — Т-Банк
+- https://polis-godovshchina.ru/strahovka-ipoteki-dom-rf/ — Банк ДОМ.РФ (+0,7 п.п.)
+- https://polis-godovshchina.ru/strahovka-ipoteki-gazprombank/ — Газпромбанк (+1 п.п.)
+- https://polis-godovshchina.ru/strahovka-ipoteki-psb/ — ПСБ (+2 п.п.)
+- https://polis-godovshchina.ru/strahovka-ipoteki-uralsib/ — Уралсиб
+- https://polis-godovshchina.ru/strahovka-ipoteki-mkb/ — МКБ
+- https://polis-godovshchina.ru/ostatok-dolga/ — калькулятор остатка долга по аннуитету на дату продления

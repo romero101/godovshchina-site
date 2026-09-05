@@ -128,7 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!dob.value) { err.hidden = false; dob.focus(); return; }
     err.hidden = true;
     const [y, m, d] = dob.value.split("-");
-    const q = "bank_id=1&debt=" + num(bal.value) + "&object_type=flat&sex=" + (sex === "f" ? "female" : "male") + "&dob=" + d + "." + m + "." + y + "&filter=all";
+    const bankId = form.dataset.bankId || "1";
+    const q = "bank_id=" + bankId + "&debt=" + num(bal.value) + "&object_type=flat&sex=" + (sex === "f" ? "female" : "male") + "&dob=" + d + "." + m + "." + y + "&filter=all";
     const params = btoa(unescape(encodeURIComponent(q)));
     const url = "https://polis812.ru/mortgage/companies?params=" + encodeURIComponent(params) + "&partnerId=" + PARTNER_ID + "&partner=" + PARTNER_ID + "&partnerYmId=" + YM_ID + "&utm_source=godovshchina&utm_medium=site&utm_campaign=sber";
     try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {}
@@ -147,4 +148,58 @@ document.addEventListener("DOMContentLoaded", () => {
     try { if (typeof ym === "function") ym(112294423, "reachGoal", "widget_open"); } catch (e) {}
     const t = setInterval(() => { const f = frame.querySelector("iframe"); if (f) { clearInterval(t); const w = document.getElementById("wl-wait"); if (w) w.remove(); openBtn.hidden = true; } }, 500);
   });
+})();
+
+// --- Напоминание о годовщине: файл .ics создаётся в браузере ---
+(function(){
+  const f = document.getElementById("remind-form");
+  if (!f) return;
+  f.addEventListener("submit", ev => {
+    ev.preventDefault();
+    const d = document.getElementById("remind-date").value; if (!d) return;
+    const end = new Date(d + "T09:00:00");
+    const remind = new Date(end); remind.setDate(remind.getDate() - 14);
+    const ymd = x => x.toISOString().slice(0,10).replace(/-/g, "");
+    const bank = f.dataset.bank || "банк";
+    const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//polis-godovshchina.ru//RU","BEGIN:VEVENT",
+      "UID:" + Date.now() + "@polis-godovshchina.ru","DTSTAMP:" + new Date().toISOString().replace(/[-:]/g,"").slice(0,15) + "Z",
+      "DTSTART;VALUE=DATE:" + ymd(remind),"DTEND;VALUE=DATE:" + ymd(remind),
+      "SUMMARY:Продлить страховку ипотеки (" + bank + ") — полис заканчивается " + d.split("-").reverse().join("."),
+      "DESCRIPTION:Посчитать цены аккредитованных страховых и передать полис в банк до окончания старого: " + location.origin + location.pathname,
+      "URL:" + location.origin + location.pathname,
+      "BEGIN:VALARM","TRIGGER:-PT0M","ACTION:DISPLAY","DESCRIPTION:Продлить страховку ипотеки","END:VALARM",
+      "END:VEVENT","END:VCALENDAR"].join("\r\n");
+    const blob = new Blob([ics], {type: "text/calendar;charset=utf-8"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "prodlenie-strahovki-ipoteki.ics";
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    try { if (typeof ym === "function") ym(112294423, "reachGoal", "reminder_ics"); } catch (e) {}
+  });
+})();
+
+// --- Остаток долга по аннуитету ---
+(function(){
+  const f = document.getElementById("annuity");
+  if (!f) return;
+  const $ = id => document.getElementById(id);
+  const num = s => parseInt(String(s).replace(/\D/g, ""), 10) || 0;
+  const rub = n => Math.round(n).toLocaleString("ru-RU") + " ₽";
+  if (!$("an-date").value) $("an-date").value = new Date().toISOString().slice(0,10);
+  function calc(){
+    const S = num($("an-sum").value), rate = Number($("an-rate").value), years = Number($("an-years").value);
+    const start = new Date($("an-start").value), at = new Date($("an-date").value);
+    if (!S || !rate || !years || isNaN(start) || isNaN(at)) return;
+    const n = Math.round(years * 12), r = rate / 100 / 12;
+    const A = S * r / (1 - Math.pow(1 + r, -n));
+    let k = (at.getFullYear() - start.getFullYear()) * 12 + (at.getMonth() - start.getMonth()) + (at.getDate() >= start.getDate() ? 1 : 0);
+    k = Math.max(0, Math.min(n, k));
+    const pk = Math.pow(1 + r, k);
+    const bal = S * pk - A * (pk - 1) / r;
+    const paid = A * k, principalPaid = S - bal, interest = paid - principalPaid;
+    $("an-big").textContent = rub(Math.max(0, bal));
+    $("an-pay").textContent = rub(A); $("an-k").textContent = k + " из " + n; $("an-int").textContent = rub(Math.max(0, interest));
+    $("an-verdict").textContent = k >= n ? "По графику кредит уже погашен." : "Эту сумму указывайте как страховую при продлении (Газпромбанк — плюс проценты за год: " + rub(Math.max(0, bal) * rate / 100) + ").";
+  }
+  $("an-sum").addEventListener("blur", () => { $("an-sum").value = num($("an-sum").value).toLocaleString("ru-RU"); calc(); });
+  ["an-sum","an-rate","an-years","an-start","an-date"].forEach(id => $(id).addEventListener("input", calc));
+  calc();
 })();

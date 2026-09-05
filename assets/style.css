@@ -105,6 +105,14 @@ th{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--mu
 tr:last-child td{border-bottom:0}
 td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 
+/* tools */
+.tool{background:var(--surface);border-left-color:var(--ink)}
+.remind{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:10px 0 6px}
+.remind label{display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:600}
+.remind input{font:inherit;font-size:16px;font-weight:400;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
+.remind .cta{margin-top:0;padding:12px 18px;font-size:15px;border:0;cursor:pointer}
+#annuity{margin-top:20px}
+
 /* partner form */
 .pform{margin-top:18px}
 .pform input[type=date]{font-family:var(--body)}
