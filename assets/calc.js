@@ -128,7 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!dob.value) { err.hidden = false; dob.focus(); return; }
     err.hidden = true;
     const [y, m, d] = dob.value.split("-");
-    const bankId = form.dataset.bankId || "1";
+    const bankSel = document.getElementById("p-bank");
+    const bankId = (bankSel && bankSel.value) || form.dataset.bankId || "1";
     const q = "bank_id=" + bankId + "&debt=" + num(bal.value) + "&object_type=flat&sex=" + (sex === "f" ? "female" : "male") + "&dob=" + d + "." + m + "." + y + "&filter=all";
     const params = btoa(unescape(encodeURIComponent(q)));
     const url = "https://polis812.ru/mortgage/companies?params=" + encodeURIComponent(params) + "&partnerId=" + PARTNER_ID + "&partner=" + PARTNER_ID + "&partnerYmId=" + YM_ID + "&utm_source=godovshchina&utm_medium=site&utm_campaign=sber";
