@@ -134,8 +134,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const params = btoa(unescape(encodeURIComponent(q)));
     const url = "https://polis812.ru/mortgage/companies?params=" + encodeURIComponent(params) + "&partnerId=" + PARTNER_ID + "&partner=" + PARTNER_ID + "&partnerYmId=" + YM_ID + "&utm_source=godovshchina&utm_medium=site&utm_campaign=sber";
     try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {}
-    window.open(url, "_blank", "noopener");
+    // Цены на нашей стороне через бэкенд (расчёт без персональных данных); если бэкенд недоступен — сразу к партнёру.
+    const box = document.getElementById("offers") || (() => { const d = document.createElement("div"); d.id = "offers"; d.className = "offers"; form.insertAdjacentElement("afterend", d); return d; })();
+    box.innerHTML = '<p class="note">Считаем цены страховых…</p>';
+    const btn = document.getElementById("p-submit"); btn.disabled = true;
+    const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "http://127.0.0.1:8090/quote.php" : "https://api.polis-godovshchina.ru/quote.php";
+    const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 7000);
+    fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, signal: ctrl.signal,
+      body: JSON.stringify({ bank_id: bankId, debt: num(bal.value), object_type: "flat", sex: sex === "f" ? "female" : "male", dob: dob.value }) })
+      .then(r => r.json())
+      .then(data => {
+        if (!data || !data.ok || !data.offers || !data.offers.length) throw new Error(data && data.error || "empty");
+        renderOffers(box, data, url);
+        try { if (typeof ym === "function") ym(112294423, "reachGoal", "offers_shown"); } catch (e) {}
+      })
+      .catch(() => { box.innerHTML = ""; window.open(url, "_blank", "noopener"); })
+      .finally(() => { clearTimeout(timer); btn.disabled = false; });
   });
+  function renderOffers(box, data, fallbackUrl) {
+    const rub = n => Math.round(n).toLocaleString("ru-RU") + " ₽";
+    const rows = data.offers.slice(0, 15).map((o, i) => `<tr${i === 0 ? ' class="best"' : ''}><td>${o.insurer}</td><td class="n">${rub(o.price)}</td><td><a class="buy" href="${o.buy_url}" data-partner-buy rel="nofollow sponsored noopener" target="_blank">Купить →</a></td></tr>`).join("");
+    const ruDate = iso => { const [y, m, d] = String(iso).split("-"); const M = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"]; return m ? `${Number(d)} ${M[Number(m) - 1]} ${y}` : iso; };
+    const head = data.estimate
+      ? `<p class="k">Оценка цен «жизнь + квартира» — ${data.bank.name}</p><p class="note">${(data.note || "").replace(/\d{4}-\d{2}-\d{2}/, ruDate)}</p>`
+      : `<p class="k">Цены страховых — ${data.bank.name}, на ${ruDate(data.asof)}</p>`;
+    box.innerHTML = head + `<div class="tblwrap"><table><thead><tr><th>Страховая</th><th class="n">В год</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+      + `<p class="note">${data.estimate ? "Точная цена и оформление — у партнёра по кнопке «Купить»." : "Оформление и оплата — на сайте партнёра Полис812."} <a href="${data.partner_url || fallbackUrl}" rel="nofollow sponsored noopener" target="_blank">Все предложения у партнёра →</a></p>`;
+    box.scrollIntoView({ behavior: "smooth", block: "start" });
+    box.querySelectorAll("a[data-partner-buy]").forEach(a => a.addEventListener("click", () => { try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_buy"); } catch (e) {} }));
+  }
   // окно партнёра — только по запросу
   const openBtn = document.getElementById("wl-open"), frame = document.getElementById("wl-frame"), tpl = document.getElementById("wl-loader");
   if (openBtn && frame && tpl) openBtn.addEventListener("click", () => {

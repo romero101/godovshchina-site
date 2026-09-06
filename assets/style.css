@@ -120,6 +120,14 @@ td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-
 .remind .cta{margin-top:0;padding:12px 18px;font-size:15px;border:0;cursor:pointer}
 #annuity{margin-top:20px}
 
+/* offers table */
+.offers{margin:16px 0 8px;background:var(--surface-2);border-radius:12px;padding:16px 18px}
+.offers .k{font-size:13.5px;color:var(--accent-ink);font-weight:600;margin:0 0 6px}
+.offers .tblwrap{background:var(--bg);margin:10px 0}
+.offers tr.best td{font-weight:700}
+.offers a.buy{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:7px 12px;border-radius:8px;white-space:nowrap}
+.offers a.buy:hover{background:var(--accent-ink)}
+
 /* partner form */
 .pform{margin-top:18px}
 .pform input[type=date]{font-family:var(--body)}
