@@ -15,19 +15,19 @@ SRV=$!
 trap 'kill $SRV 2>/dev/null' EXIT
 sleep 1
 echo "== Локальный прогон (release) =="
-( cd tests/e2e && SITE=http://127.0.0.1:$PORT MODE=release node run.mjs ) || { echo; echo "КРИТИЧЕСКИЕ КЕЙСЫ НЕ ПРОШЛИ — выкладка отменена. Отчёт: tests/e2e/results.json"; exit 1; }
+( cd tests/e2e && SITE=http://127.0.0.1:$PORT MODE=release node run.mjs ) || { echo; echo "КРИТИЧЕСКИЕ КЕЙСЫ НЕ ПРОШЛИ — выкладка отменена. Отчёт: tests/e2e/results-release.json"; exit 1; }
 [ "${1:-}" = "--no-push" ] && { echo "Локальный прогон прошёл, push пропущен (--no-push)"; exit 0; }
 if [ -n "$(git status --porcelain)" ]; then echo "Есть незакоммиченные изменения — сначала commit"; exit 1; fi
 echo "== push =="
 git push origin main || exit 1
-V=$(grep -o 'calc.js?v=[0-9]*' strahovka-ipoteki-sberbank/index.html | head -1)
-echo "== ждём выкладку GitHub Pages ($V) =="
-for i in $(seq 1 24); do
-  L=$(curl -s "https://polis-godovshchina.ru/strahovka-ipoteki-sberbank/?r=$RANDOM" | grep -o 'calc.js?v=[0-9]*' | head -1)
-  [ "$L" = "$V" ] && break
+H=$(md5 -q strahovka-ipoteki-sberbank/index.html)
+echo "== ждём выкладку GitHub Pages (страница Сбера, md5 $H) =="
+for i in $(seq 1 30); do
+  L=$(curl -s "https://polis-godovshchina.ru/strahovka-ipoteki-sberbank/?r=$RANDOM" | md5 -q)
+  [ "$L" = "$H" ] && break
   sleep 15
 done
-[ "$L" = "$V" ] || { echo "Живой сайт всё ещё отдаёт $L, ожидалось $V — проверьте деплой"; exit 1; }
+[ "$L" = "$H" ] || { echo "Живой сайт всё ещё отдаёт старую страницу — проверьте деплой"; exit 1; }
 echo "== Дымовой прогон на живом сайте (smoke) =="
-( cd tests/e2e && MODE=smoke node run.mjs ) || { echo "Дымовой прогон на живом сайте упал — смотрите tests/e2e/results.json"; exit 1; }
-echo "Выкладка завершена. Результаты для чек-листа: tests/e2e/db-results.json"
+( cd tests/e2e && MODE=smoke node run.mjs ) || { echo "Дымовой прогон на живом сайте упал — смотрите tests/e2e/results-smoke.json"; exit 1; }
+echo "Выкладка завершена. Результаты для чек-листа: tests/e2e/db-results-release.json и db-results-smoke.json"

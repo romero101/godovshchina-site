@@ -336,8 +336,8 @@ const pass = R.filter(r => r.ok === true).length, fail = R.filter(r => r.ok === 
 const critIds = [...new Set(R.filter(r => CRITICAL.includes(r.id) && r.ok !== null).map(r => r.id))];
 const critFailed = critIds.filter(id => byId[id].some(r => r.ok === false));
 const lastRun = { at: now, mode: MODE, site: IS_LIVE ? "live" : "local", commit: COMMIT, pass, fail, skip, critPass: critIds.length - critFailed.length, critTotal: critIds.length };
-fs.writeFileSync(path.join(HERE, "results.json"), JSON.stringify(R, null, 1));
-fs.writeFileSync(path.join(HERE, "db-results.json"), JSON.stringify({ cases, matrix, lastRun }));
+fs.writeFileSync(path.join(HERE, `results-${MODE}.json`), JSON.stringify(R, null, 1));
+fs.writeFileSync(path.join(HERE, `db-results-${MODE}.json`), JSON.stringify({ cases, matrix, lastRun }));
 console.log(`\nИТОГО (${MODE}, ${IS_LIVE ? "живой сайт" : "локальная сборка"}, ${COMMIT}): прошло ${pass}, не прошло ${fail}, без проверки ${skip}`);
 console.log(`Критические кейсы прошли: ${lastRun.critPass} из ${lastRun.critTotal}${critFailed.length ? " — УПАЛИ: " + critFailed.join(", ") : ""}`);
 process.exit(critFailed.length ? 1 : 0);

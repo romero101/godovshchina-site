@@ -1,4 +1,4 @@
 node_modules/
-results.json
-db-results.json
+results*.json
+db-results*.json
 package*.json
