@@ -11,7 +11,7 @@ PARTNER, YM = "212866", "112294423"
 COLORS = "%7B%22primary%22%3A%22%230B7A5B%22%2C%22secondary%22%3A%22%2314946F%22%2C%22accent%22%3A%22%2314213D%22%2C%22accentHover%22%3A%22%232A3B63%22%2C%22calculatorBlock1%22%3A%22%23F4F6F9%22%2C%22calculatorBlock2%22%3A%22%23D9F0E7%22%2C%22secondaryLight%22%3A%22%23FFFFFF%22%2C%22accentHoverLight%22%3A%22%239094a2%22%2C%22accentActive%22%3A%22%23121e37%22%2C%22calculatorBlock%22%3A%22%23F4F6F9%22%2C%22optionColor%22%3A%7B%22name%22%3A%22%D0%A7%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%22%2C%22val%22%3A%22%23303030%22%7D%2C%22backgroundColor%22%3A%22%23F7F8FA%22%7D"
 FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230B7A5B'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='36' fill='white'%3EГ%3C/text%3E%3C/svg%3E"
 FONTS = "https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=IBM+Plex+Sans:wght@400;500;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap"
-CSS_V, JS_V, MET_V = "11", "13", "3"
+CSS_V, JS_V, MET_V = "11", "14", "3"
 
 # slug, name, gen (кого/чего), loc (в ком/чём), polis_id, uplift_default, uplift_options[(value,label)],
 # uplift_text (фраза для текста), upload (как передать полис), cabinet (короткое имя канала), notes (особенности, список)

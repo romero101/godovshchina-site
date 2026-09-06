@@ -102,12 +102,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const url = GDV.partnerUrl(GDV.bankId(), readBalance(), sex, dobISO);
     ev.preventDefault();
     try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {}
-    const w = window.open(url, "_blank", "noopener");
-    if (!w) location.href = url;
+    GDV.open(url);
   });
 
   const balance = document.getElementById("balance");
   const range = document.getElementById("balance-range");
+  // запоминаем ввод на время сессии: возврат кнопкой «назад» и переходы между страницами банков
+  try { const saved = JSON.parse(sessionStorage.getItem("gdv-calc") || "null"); if (saved) { if (saved.b) balance.value = saved.b; if (saved.a) document.getElementById("age").value = saved.a; if (saved.s) document.querySelectorAll("#sex button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === saved.s)); } } catch (e) {}
+  const remember = () => { try { const sb = document.querySelector("#sex button[aria-pressed='true']"); sessionStorage.setItem("gdv-calc", JSON.stringify({ b: balance.value, a: document.getElementById("age").value, s: sb ? sb.dataset.v : "m" })); } catch (e) {} };
+  document.getElementById("calc").addEventListener("input", remember); document.getElementById("calc").addEventListener("click", remember);
   formatBalanceField(balance);
   balance.addEventListener("input", () => { if (range) range.value = readBalance(); calc(); });
   balance.addEventListener("blur", () => formatBalanceField(balance));
@@ -130,6 +133,9 @@ window.GDV = (function(){
   const PARTNER_ID = "212866", YM_ID = "112294423";
   const pad = n => String(n).padStart(2, "0");
   return {
+    // Новая вкладка партнёра. Без флага "noopener" в window.open: с ним браузер по спецификации возвращает null,
+    // и запасной переход в той же вкладке срабатывал всегда — открывались и вкладка, и переход. Opener обнуляем вручную.
+    open(url) { let w = null; try { w = window.open(url, "_blank"); } catch (e) {} if (w) { try { w.opener = null; } catch (e) {} return true; } location.href = url; return false; },
     bankId() { const sel = document.getElementById("p-bank"); const f = document.getElementById("pform"); return (sel && sel.value) || (f && f.dataset.bankId) || "1"; },
     dobFromAge(age) { const d = new Date(); d.setMonth(d.getMonth() - 6); d.setFullYear(d.getFullYear() - age); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); },
     partnerUrl(bankId, debt, sex, dobISO) {
@@ -159,8 +165,9 @@ window.GDV = (function(){
   // Бэкенд цен: проверяем доступность один раз при загрузке. Пока его нет — кнопка открывает партнёра мгновенно,
   // прямо в обработчике клика (иначе браузеры блокируют новую вкладку).
   const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "http://127.0.0.1:8090/quote.php" : "https://api.polis-godovshchina.ru/quote.php";
+  const API_ENABLED = false; // включить, когда бэкенд api.polis-godovshchina.ru развёрнут
   let apiOk = false;
-  try {
+  if (API_ENABLED) try {
     const c = new AbortController(); setTimeout(() => c.abort(), 2500);
     fetch(API, { method: "OPTIONS", signal: c.signal, mode: "cors" }).then(r => { apiOk = r.ok || r.status === 204 || r.status === 405; }).catch(() => { apiOk = false; });
   } catch (e) {}
@@ -172,7 +179,7 @@ window.GDV = (function(){
     const bankId = GDV.bankId();
     const url = GDV.partnerUrl(bankId, num(bal.value), sex, dob.value);
     try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {}
-    if (!apiOk) { const w = window.open(url, "_blank", "noopener"); if (!w) location.href = url; return; }
+    if (!apiOk) { GDV.open(url); return; }
     // Цены на нашей стороне через бэкенд (расчёт без персональных данных); если он не ответил за 3 с — ссылка к партнёру.
     const box = document.getElementById("offers") || (() => { const d = document.createElement("div"); d.id = "offers"; d.className = "offers"; form.insertAdjacentElement("afterend", d); return d; })();
     box.innerHTML = '<p class="note">Считаем цены страховых…</p>';
@@ -186,7 +193,7 @@ window.GDV = (function(){
         renderOffers(box, data, url);
         try { if (typeof ym === "function") ym(112294423, "reachGoal", "offers_shown"); } catch (e) {}
       })
-      .catch(() => { apiOk = false; const w = window.open(url, "_blank", "noopener"); box.innerHTML = w ? "" : '<p class="note">Цены считаются у партнёра: <a class="cta" href="' + url + '" rel="nofollow sponsored noopener" target="_blank">Открыть предложения страховых →</a></p>'; })
+      .catch(() => { apiOk = false; box.innerHTML = '<p class="note">Цены считаются у партнёра: <a class="cta" href="' + url + '" rel="nofollow sponsored noopener" target="_blank">Открыть предложения страховых →</a></p>'; GDV.open(url); })
       .finally(() => { clearTimeout(timer); btn.disabled = false; });
   });
   function renderOffers(box, data, fallbackUrl) {
@@ -222,8 +229,10 @@ window.GDV = (function(){
   if (!f) return;
   f.addEventListener("submit", ev => {
     ev.preventDefault();
-    const d = document.getElementById("remind-date").value; if (!d) return;
+    const inp = document.getElementById("remind-date"); const d = inp.value;
     const end = new Date(d + "T09:00:00");
+    inp.setCustomValidity(!d ? "Укажите дату окончания полиса" : end.getTime() - Date.now() < 14 * 864e5 ? "Дата должна быть не раньше чем через 2 недели: напоминание ставится за 14 дней" : "");
+    if (!inp.reportValidity()) return;
     const remind = new Date(end); remind.setDate(remind.getDate() - 14);
     const ymd = x => x.toISOString().slice(0,10).replace(/-/g, "");
     const bank = f.dataset.bank || "банк";
