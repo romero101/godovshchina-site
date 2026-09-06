@@ -238,7 +238,7 @@ for (const env of ENVS) {
       const hasForm = /id="pform"/.test(html), hasSelect = /id="p-bank"/.test(html), hasLink = /data-partner|polis812\.ru|pampadu\.ru/.test(html);
       if (hasForm && !hasSelect && !KNOWN_BANKS.has(bank)) bad.push(`${p} неизвестный bank_id=${bank}`);
       if (hasForm) withForm.add(p);
-      pageLinks[p] = [...html.matchAll(/href="(\/[^"#?]*)"/g)].map(m => m[1]);
+      pageLinks[p] = [...new Set([...html.matchAll(/href="([^"]+)"/g)].map(m => m[1]).filter(h => !/^(https?:|data:|mailto:|tel:|#)/.test(h)).map(h => { try { return new URL(h, u).pathname; } catch { return null; } }).filter(Boolean))];
       if (!hasForm && !hasLink) noPath.push(p);
       for (const l of pageLinks[p]) links.add(l);
     }
