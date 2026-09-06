@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const balance = document.getElementById("balance");
   const range = document.getElementById("balance-range");
   // запоминаем ввод на время сессии: возврат кнопкой «назад» и переходы между страницами банков
-  try { const saved = JSON.parse(sessionStorage.getItem("gdv-calc") || "null"); if (saved) { if (saved.b) balance.value = saved.b; if (saved.a) document.getElementById("age").value = saved.a; if (saved.s) document.querySelectorAll("#sex button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === saved.s)); } } catch (e) {}
+  try { const saved = JSON.parse(sessionStorage.getItem("gdv-calc") || "null"); if (saved) { if (saved.b) balance.value = saved.b; if (saved.a) document.getElementById("age").value = saved.a; if (saved.s) document.querySelectorAll("#sex button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === saved.s)); ["balance", "age"].forEach(id => document.getElementById(id).dispatchEvent(new Event("input", { bubbles: true }))); } } catch (e) {}
   const remember = () => { try { const sb = document.querySelector("#sex button[aria-pressed='true']"); sessionStorage.setItem("gdv-calc", JSON.stringify({ b: balance.value, a: document.getElementById("age").value, s: sb ? sb.dataset.v : "m" })); } catch (e) {} };
   document.getElementById("calc").addEventListener("input", remember); document.getElementById("calc").addEventListener("click", remember);
   formatBalanceField(balance);
