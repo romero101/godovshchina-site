@@ -1,0 +1,342 @@
+<title>Тест-кейсы Годовщины</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f5f4ef; --card:#ffffff; --ink:#1c2430; --muted:#5f6b78; --line:#dcdad2;
+  --accent:#0b7a5b; --accent-soft:#e3f1ea; --fail:#b3261e; --fail-soft:#f8e4e2; --warn:#9a6700; --warn-soft:#fbf1d6;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#151a20; --card:#1e252e; --ink:#e8eaee; --muted:#9aa5b1; --line:#2f3944;
+  --accent:#4fc39a; --accent-soft:#1d3b31; --fail:#f28b82; --fail-soft:#4a2320; --warn:#e2b93b; --warn-soft:#3f3416;
+}}
+:root[data-theme="dark"]{
+  --bg:#151a20; --card:#1e252e; --ink:#e8eaee; --muted:#9aa5b1; --line:#2f3944;
+  --accent:#4fc39a; --accent-soft:#1d3b31; --fail:#f28b82; --fail-soft:#4a2320; --warn:#e2b93b; --warn-soft:#3f3416;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans)}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 80px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0 10px;border-bottom:1px solid var(--line);margin-bottom:18px}
+h1{font-size:22px;margin:0 0 4px;font-weight:600;text-wrap:balance}
+.sub{color:var(--muted);font-size:13px;margin:0}
+.progress{display:flex;gap:14px;align-items:center;margin-top:10px;font-size:13px;flex-wrap:wrap}
+.bar{flex:1;min-width:160px;height:8px;background:var(--line);border-radius:4px;overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.bar .p{background:var(--accent)} .bar .f{background:var(--fail)}
+.stat b{font-variant-numeric:tabular-nums}
+.sync{font-size:12px;color:var(--muted)}
+.sync.on::before{content:"●";color:var(--accent);margin-right:4px}
+.sync.off::before{content:"●";color:var(--warn);margin-right:4px}
+.pre{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:22px;font-size:14px}
+.pre h2{margin:0 0 6px;font-size:15px}
+.pre ul{margin:0;padding-left:18px}
+.pre li{margin:2px 0}
+.pre code{font:13px var(--mono);background:var(--bg);padding:1px 5px;border-radius:4px}
+section{margin:0 0 26px}
+h2{font-size:16px;margin:0 0 8px;font-weight:600;display:flex;gap:10px;align-items:baseline}
+h2 .n{font:500 13px var(--mono);color:var(--muted)}
+h2 .cnt{font:400 12px var(--mono);color:var(--muted);margin-left:auto}
+.case{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:start}
+.case.pass{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 45%,var(--card))}
+.case.fail{border-color:var(--fail);background:color-mix(in srgb,var(--fail-soft) 55%,var(--card))}
+.ctl{display:flex;flex-direction:column;gap:6px;align-items:center;padding-top:2px}
+.ctl label{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted);user-select:none}
+.ctl input{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;margin:0}
+.ctl input.x{accent-color:var(--fail)}
+.id{font:500 12px var(--mono);color:var(--muted);display:flex;gap:8px;align-items:center}
+.pr{font:600 10px var(--sans);letter-spacing:.04em;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+.pr.k{color:var(--fail);border-color:var(--fail)} .pr.v{color:var(--warn);border-color:var(--warn)}
+.mode{font:500 10px var(--mono);letter-spacing:.03em;padding:1px 6px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+.mode.M{background:var(--warn-soft);color:var(--warn)} .mode.AM{background:var(--line);color:var(--muted)}
+.later{font:400 11px var(--sans);color:var(--muted)}
+.chlog{font-size:13px;color:var(--muted);margin:-12px 0 20px}
+.chlog summary{cursor:pointer;color:var(--ink)}
+.chlog ul{margin:6px 0 0;padding-left:18px}
+.act{font-weight:500}
+.exp{margin-top:4px;padding-left:10px;border-left:3px solid var(--accent);color:var(--ink)}
+.exp::before{content:"Ожидается: ";color:var(--accent);font-weight:600}
+.case.fail .exp{border-left-color:var(--fail)}
+.note{margin-top:8px;width:100%;font:13px var(--sans);padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);resize:vertical;min-height:34px}
+.note:focus{outline:2px solid var(--accent);outline-offset:1px}
+.matrix{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:700px;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
+th{font-weight:600;background:var(--bg)}
+td:first-child,th:first-child{text-align:left;min-width:250px}
+td:first-child small{display:block;color:var(--muted);font-weight:400}
+tr.tier td{background:var(--bg);font-weight:600;text-align:left}
+.cell{width:30px;height:30px;border:1px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;font:600 14px var(--mono);color:var(--muted)}
+.cell.p{background:var(--accent);border-color:var(--accent);color:#fff}
+.cell.f{background:var(--fail);border-color:var(--fail);color:#fff}
+.cell:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.legend{font-size:12px;color:var(--muted);margin:8px 0 0}
+.key{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:3px}
+footer{color:var(--muted);font-size:12px;margin-top:30px;border-top:1px solid var(--line);padding-top:10px}
+button.reset{font:13px var(--sans);color:var(--muted);background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer}
+@media (prefers-reduced-motion:no-preference){.case{transition:background .15s,border-color .15s}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Тест-кейсы Годовщины</h1>
+  <p class="sub">polis-godovshchina.ru · версия 3 от 7 сентября 2026 · сайт calc.js v15, metrika.js v3</p>
+  <div class="progress">
+    <div class="bar"><i class="p" id="barp"></i><i class="f" id="barf"></i></div>
+    <span class="stat">Прошло <b id="np">0</b> · не прошло <b id="nf">0</b> · всего <b id="na">0</b></span>
+    <span class="sync off" id="sync">сохраняется в этом браузере</span>
+  </div>
+</header>
+
+<details class="chlog">
+  <summary>История версий тест-кейсов</summary>
+  <ul>
+    <li><b>v3, 7 сентября 2026.</b> У каждого кейса метка «авто» / «руками» / «авто + руками» и пометка, когда ручной станет автоматическим. Проставлены результаты первого автопрогона (3 окружения). Правило: версия документа растёт при каждом изменении, с записью здесь.</li>
+    <li><b>v2, 6 сентября 2026.</b> Приоритеты К/В/Ж, блок предусловий и тестовых данных, раздел «Отказы и сбои», граничные значения (29 февраля, 18 лет, кеш скриптов, VPN), оплата у партнёра до формы. 66 кейсов вместо 46. Матрица окружений переделана под Россию: приложение Яндекс, Яндекс Браузер с «Защитой», Xiaomi/Samsung 360 px; два ряда — обязательные и расширенные, 19 окружений.</li>
+    <li><b>v1, 6 сентября 2026.</b> Первая версия: 46 кейсов в 10 разделах, 10 окружений.</li>
+  </ul>
+</details>
+
+<div class="pre">
+  <h2>Перед началом</h2>
+  <ul>
+    <li><b>Кто проверяет:</b> <span class="mode A">авто</span> гоняет Клод скриптом <code>tests/e2e/run.mjs</code> перед каждой выкладкой; <span class="mode M">руками</span> проходит Роман: критические перед выкладкой, когда меняется путь до партнёра, полный ряд раз в месяц.</li>
+    <li><b>Приоритет:</b> <span class="pr k">К</span> критично, без этого нет денег · <span class="pr v">В</span> важно, теряем часть людей · <span class="pr">Ж</span> желательно.</li>
+    <li><b>Тестовые данные:</b> остаток 2 500 000 ₽, возраст 40, мужчина, дата рождения 15.03.1986, банк той страницы. Второй набор: 1 200 000 ₽, 29 лет, женщина.</li>
+    <li><b>Чистое состояние:</b> перед разделами 1 и 3 закрыть все вкладки polis812.ru и очистить кеш сайта (или открыть в режиме инкогнито, кроме кейса 1.3).</li>
+    <li><b>Проверка целей Метрики:</b> открыть страницу с добавкой <code>?_ym_debug=1</code>, в консоли браузера искать строки <code>reachGoal</code>. На телефоне: те же цели через Метрику → Посетители → свой визит через 5 минут.</li>
+    <li><b>Отметка:</b> кейс считается пройденным, только если выполнено всё, что написано в «Ожидается». Любое расхождение = «не прошёл» с заметкой: устройство, браузер, что увидели.</li>
+  </ul>
+</div>
+
+<div id="sections"></div>
+
+<section>
+  <h2><span class="n">М</span>Матрица окружений <span class="cnt">клик по ячейке: ✓ → ✗ → пусто</span></h2>
+  <div class="matrix"><table id="matrix"></table></div>
+  <p class="legend"><span class="key" style="background:var(--accent)"></span>прошёл &nbsp; <span class="key" style="background:var(--fail)"></span>не прошёл &nbsp; <span class="key" style="background:var(--line)"></span>не проверялось. Обязательный ряд закрывает ~90 % трафика из Директа в России; расширенный ряд проходить после первой недели по фактическим браузерам из Метрики.</p>
+</section>
+
+<footer>
+  Отметки сохраняются автоматически. Если написано «синхронизируется», их видно и Роману на другом устройстве, и Клоду.
+  <button class="reset" id="reset" type="button">Сбросить все отметки</button>
+</footer>
+</div>
+
+<script>
+// [id, priority(К/В/Ж), action, expected]
+const SECTIONS = [
+ {n:"1", t:"Загрузка страницы и окружение", cases:[
+  ["1.1","A","К","На телефоне по мобильной сети (не Wi-Fi) открыть /strahovka-ipoteki-sberbank/, засечь время","Первый экран с калькулятором виден за 2,5 с, страница не прыгает при дозагрузке шрифтов и картинок","авто, добавить PageSpeed API"],
+  ["1.2","A","В","Открыть консоль браузера на странице Сбера, ВТБ и калькулятора","Ошибок нет; подключены calc.js?v=13 и metrika.js?v=3; нет предупреждений о смешанном содержимом (http внутри https)"],
+  ["1.3","A","Ж","Первый заход: нажать «Понятно» на плашке cookie, перезагрузить; затем открыть в инкогнито","Плашка показана один раз и не возвращается; в инкогнито показывается снова и не мешает калькулятору"],
+  ["1.4","AM","К","Открыть страницу с меткой ?utm_source=yandex&utm_medium=cpc&utm_campaign=search_banks&utm_content=1&utm_term=test","Страница та же, вёрстка цела, калькулятор работает; в Метрике визит с источником «Яндекс Директ» и меткой search_banks"],
+  ["1.5","A","Ж","Открыть адрес без слеша: /strahovka-ipoteki-vtb, затем с большой буквой в пути","Без слеша — редирект 301 на вариант со слешем; с большой буквой — 404 или редирект, но не пустая страница"],
+  ["1.6","A","В","Открыть несуществующий адрес /abc/","Своя страница 404 со ссылками на главную и калькулятор; в консоли нет ошибок"],
+  ["1.7","A","В","Открыть страницу сразу после выкладки новой версии (в течение 10 минут) на устройстве, где сайт уже открывали","Загружен новый calc.js (номер версии в адресе скрипта совпадает с текущим), старый не залип в кеше"],
+  ["1.8","A","Ж","Включить тёмную тему устройства и увеличить шрифт до 150 % (настройки телефона)","Текст читается, кнопки не наезжают друг на друга, калькулятор помещается в экран"],
+  ["1.9","A","Ж","Повернуть телефон горизонтально на странице с калькулятором","Форма и кнопка видны, ничего не обрезано"],
+ ]},
+ {n:"2", t:"Калькулятор «полис или надбавка» на первом экране", cases:[
+  ["2.1","A","В","Ввести остаток 2500000 цифрами","Показано «2 500 000», ползунок сдвинулся, результат пересчитан сразу"],
+  ["2.2","A","В","Ввести остаток с пробелами и буквами: «2 500 000 руб»","Лишнее отброшено, число принято как 2 500 000"],
+  ["2.3","A","Ж","Подвигать ползунок остатка","Поле остатка обновляется, результат пересчитан"],
+  ["2.4","A","В","Возраст 18, затем 35, затем 70","Цена растёт с возрастом; 17 и 71 не принимаются или ограничиваются; пустое поле не даёт NaN"],
+  ["2.5","A","В","Переключить пол на «Женщина» при тех же данных","Цена ниже, чем у «Мужчина»; кнопка пола показывает выбранное состояние"],
+  ["2.6","A","В","Где есть поле надбавки банка: поставить 0 %, затем 5 %","Вывод меняется: при 0 % выгоднее без полиса, при 5 % выгоднее полис; текст вывода читается однозначно"],
+  ["2.7","A","Ж","Остаток 100 000, затем 50 000 000, затем 0","Без ошибок, без NaN и «Infinity»; при 0 понятное значение или ограничение снизу"],
+  ["2.8","A","Ж","На ПК заполнить калькулятор только клавиатурой (Tab, стрелки, Enter)","Все поля и кнопка достижимы, фокус виден, Enter в поле не перезагружает страницу"],
+ ]},
+ {n:"3", t:"Кнопка «Показать точные цены … страховых» под калькулятором", cases:[
+  ["3.1","A","К","Остаток 2 500 000, возраст 40, «Мужчина», нажать кнопку","Сразу открылась новая вкладка polis812.ru/mortgage/companies; в адресе partnerId=212866; в выдаче банк той страницы, остаток 2 500 000, мужчина, возраст 40"],
+  ["3.2","A","К","То же при запрете всплывающих окон: Safari на iPhone по умолчанию, Яндекс Браузер с «Защитой», Chrome с блокировщиком","Выдача партнёра открывается в этой же вкладке. «Ничего не происходит» = не прошёл"],
+  ["3.3","M","К","То же из встроенного браузера приложения Яндекс (перейти по объявлению в приложении Яндекс с Алисой)","Выдача партнёра открывается (в этой же вкладке или во внешнем браузере), не белый экран"],
+  ["3.4","A","В","После клика вернуться на страницу сайта и промотать до формы «Показать цены для моей ипотеки»","Остаток и дата рождения заполнены с калькулятора; дата соответствует возрасту 40 (год рождения 1986)"],
+  ["3.5","A","В","Открыть страницу с ?_ym_debug=1, нажать кнопку, посмотреть консоль","Ровно одна строка reachGoal partner_click на один клик"],
+  ["3.6","M","В","Засечь время от клика до появления цен на странице Полис812 (мобильная сеть)","Цены видны не позже 10 с; если дольше, записать время и устройство в заметку"],
+  ["3.7","M","К","В выдаче Полис812 нажать «Купить» у любой страховой, дойти до формы данных, НЕ оплачивать","Форма оформления открывается, банк и остаток подставлены, партнёрская метка не потеряна (в адресе partner=212866 или в кабинете партнёра через сутки виден расчёт)"],
+  ["3.8","M","В","Через VPN с зарубежным IP нажать кнопку","Полис812 открывается и считает цены, а не блокирует иностранный адрес; если блокирует, зафиксировать текст ошибки"],
+ ]},
+ {n:"4", t:"Форма «Показать цены для моей ипотеки»", cases:[
+  ["4.1","A","В","Открыть страницу заново, ничего не трогая в калькуляторе","В форме остаток 3 000 000 и дата рождения, соответствующая возрасту по умолчанию"],
+  ["4.2","A","В","Изменить дату рождения вручную на 15.03.1986, затем поменять возраст в калькуляторе","Введённая вручную дата не перезаписывается"],
+  ["4.3","A","В","Очистить дату рождения, нажать «Показать цены страховых»","Подсказка про дату, фокус в поле, вкладка партнёра не открывается"],
+  ["4.4","A","К","Заполненная форма, нажать «Показать цены страховых»","Сразу новая вкладка партнёра; банк страницы, остаток, пол и дата совпадают с формой"],
+  ["4.5","A","В","На /kalkulyator-strahovaniya-ipoteki/ выбрать в форме банк Дом.РФ, нажать кнопку","В выдаче партнёра именно Дом.РФ"],
+  ["4.6","A","Ж","Ввести остаток 50 000, убрать фокус; затем 99 000 000","Поле само ограничивается: 100 000 и 50 000 000"],
+  ["4.7","A","В","Нажать кнопку два раза подряд","Кнопка не остаётся неактивной, второй клик снова открывает партнёра"],
+  ["4.8","A","Ж","Дата рождения 29.02.1988 и дата, дающая ровно 18 лет сегодня","Обе принимаются, партнёр открывается, возраст у партнёра считается верно"],
+  ["4.9","M","Ж","На телефоне ввести дату через системный выбор даты, затем нажать «Готово»","Дата встала в поле в формате, который принимает форма; кнопка работает"],
+  ["4.10","A","Ж","На ПК нажать Enter в поле остатка при заполненной форме","Форма отправляется так же, как по кнопке, страница не перезагружается"],
+ ]},
+ {n:"5", t:"Окно партнёра на странице (страницы Сбера и калькулятора)", cases:[
+  ["5.1","A","В","Нажать «Открыть окно партнёра»","Под кнопкой появилась рамка с калькулятором Полис812, текст кнопки сменился на «Загружаем…», окно рабочее в течение 15 с"],
+  ["5.2","M","В","В окне партнёра посчитать цену","Таблица цен внутри страницы; кнопки «Купить» ведут на polis812.ru и не блокируются"],
+  ["5.3","A","В","Если окно не загрузилось за 15 с (или отключить сеть на 5 с и включить)","Работает ссылка «откройте его в новой вкладке» и ссылка на калькулятор Пампаду; нет вечного «Загружаем…»"],
+  ["5.4","A","Ж","Открыть окно партнёра на телефоне с шириной экрана 360 px","Рамка не выходит за экран, внутри можно прокручивать и нажимать"],
+ ]},
+ {n:"6", t:"Напоминание в календарь", cases:[
+  ["6.1","A","В","Указать дату окончания полиса, нажать «Напомнить»","Скачался файл .ics (на iPhone Safari предлагает открыть в Календаре, не показывает текст файла)"],
+  ["6.2","M","В","Открыть файл на iPhone (Календарь) и на Android (Google Календарь)","Событие за 2 недели до даты с уведомлением, русский текст без кракозябр, дата верная"],
+  ["6.3","A","Ж","Дата окончания в прошлом или пустая","Понятная подсказка, файл не создаётся"],
+  ["6.4","A","Ж","Проверить Метрику после скачивания","Цель «Напоминание в календарь» засчитана один раз"],
+ ]},
+ {n:"7", t:"Калькулятор остатка долга /ostatok-dolga/", cases:[
+  ["7.1","A","В","Сумма 3 000 000, ставка 10 %, 20 лет, старт год назад","Остаток меньше суммы и больше нуля, платёж около 28 950 ₽"],
+  ["7.2","A","Ж","Ставка с запятой «10,5» и с точкой «10.5»","Оба варианта считаются одинаково"],
+  ["7.3","A","Ж","Дата раньше старта, ставка 0, срок 0","Нет NaN, понятное сообщение или ноль"],
+  ["7.4","A","Ж","Кнопка переноса остатка в калькулятор (если есть)","Остаток подставлен на странице банка"],
+ ]},
+ {n:"8", t:"Навигация, вёрстка, доступность", cases:[
+  ["8.1","A","В","Главная → «Все банки» → страница банка → «Аккредитованные страховые» → страница страховой","Все ссылки ведут на существующие страницы, хлебные крошки верные, кнопка «назад» возвращает куда ожидаешь"],
+  ["8.2","A","В","Открыть 3 случайные страницы банков: ВТБ, Альфа, Т-Банк","На каждой форма расчёта со своим банком, и партнёр открывается с этим банком"],
+  ["8.3","A","В","На телефоне открыть и закрыть меню","Меню открывается и закрывается, ссылки нажимаются большим пальцем, ничего не перекрыто плашкой cookie"],
+  ["8.4","A","В","На телефоне 360 px промотать страницы с картинками и таблицами цен","Картинки не выходят за экран, таблицы прокручиваются по горизонтали, нет горизонтальной прокрутки всей страницы"],
+  ["8.5","A","Ж","Промотать до футера, открыть политику","Есть «ИП Роман, ИНН», ссылка на политику открывается, в политике упомянуты Метрика и партнёр"],
+  ["8.6","M","Ж","Включить VoiceOver (iPhone) или TalkBack (Android), пройти калькулятор","Поля объявляются с названиями, кнопка «Показать цены» читается как кнопка"],
+  ["8.7","A","Ж","Вернуться на сайт после вкладки партнёра кнопкой «назад» и через переключение вкладок","Значения калькулятора на месте, ничего не сбросилось"],
+ ]},
+ {n:"9", t:"Аналитика, реклама, партнёр", cases:[
+  ["9.1","A","К","Перейти по объявлению из Директа (или по ссылке с utm из отчёта)","Посадочная соответствует группе: ВТБ → /strahovka-ipoteki-vtb/, калькулятор → /kalkulyator-strahovaniya-ipoteki/; страница открылась за 2,5 с"],
+  ["9.2","M","В","Сделать полный путь: калькулятор → кнопка → партнёр; посмотреть свой визит в Метрике («Посетители»)","В визите цель partner_click; после появления бэкенда также offers_shown и partner_buy","авто после токена Метрики"],
+  ["9.3","M","К","Через сутки открыть кабинет Полис812","Переход виден с меткой utm_source=godovshchina и партнёром 212866; расчёт из кейса 3.7 виден"],
+  ["9.4","M","В","Открыть Вебвизор в Метрике","Визит с рекламы записан, запись воспроизводится, видны клики по кнопке"],
+  ["9.5","M","В","В Директе открыть отчёт «Поисковые запросы» за день","Нет очевидного мусора (работа, отзывы, вернуть, суд); если есть, добавить в минус-слова","авто после API Директа"],
+  ["9.6","M","Ж","Сравнить число кликов в Директе и визитов с рекламы в Метрике за день","Расхождение не больше 20 %; если больше, проверить блокировщики и скорость","авто после API Директа"],
+ ]},
+ {n:"10", t:"Отказы и сбои", cases:[
+  ["10.1","A","К","Заблокировать polis812.ru (например, через блокировщик или отключить сеть после загрузки страницы) и нажать кнопку","Сайт не зависает: вкладка партнёра открывается с ошибкой сети, кнопка снова активна, есть ссылка на Пампаду"],
+  ["10.2","A","В","Открыть сайт с включённым uBlock Origin или AdGuard","Калькулятор и кнопка работают; если Метрика заблокирована, сайт не ломается"],
+  ["10.3","A","В","Открыть сайт при отключённом JavaScript","Виден текст и ссылка на партнёра, нет пустой страницы"],
+  ["10.4","A","Ж","Дважды быстро нажать «Показать цены» на медленной сети","Открылась одна вкладка партнёра, а не две; цель засчитана один раз"],
+ ]},
+ {n:"11", t:"Бэкенд цен (после развёртывания api.polis-godovshchina.ru)", cases:[
+  ["11.1","A","К","curl -X POST https://api.polis-godovshchina.ru/quote.php с JSON из README","Ответ ok:true и список страховых с ценами за 2 с; сертификат HTTPS валидный","авто после развёртывания"],
+  ["11.2","A","К","На сайте нажать «Показать цены страховых»","Таблица цен под формой за 3 с; вкладка партнёра не открывается сама; «Купить» открывает партнёра и засчитывает partner_buy","авто после развёртывания"],
+  ["11.3","A","К","Выключить бэкенд, нажать кнопку","Партнёр открывается сразу, без зависания «Считаем цены…»","авто после развёртывания"],
+  ["11.4","A","В","Запрос без Origin сайта или чаще 30 раз в минуту","Отказ; сайт от этого не ломается","авто после развёртывания"],
+  ["11.5","A","В","Сравнить цену из таблицы и цену у партнёра для тех же данных","Расхождение не больше 5 % или таблица помечена как оценка","авто после развёртывания"],
+ ]},
+];
+const ENVS = [
+ {tier:"Обязательные: закрывают основной трафик из Директа в России"},
+ ["A","Android, Chrome, телефон Xiaomi или Samsung, ширина 360 px","самый массовый вариант; включить «Экономию трафика»"],
+ ["B","Android, Яндекс Браузер с включённой «Защитой»","блокирует всплывающие окна и трекеры"],
+ ["C","Android, встроенный браузер приложения Яндекс (с Алисой)","так открываются объявления Директа из приложения; поведение отличается от Chrome"],
+ ["D","iPhone, Safari, iOS 17–18","всплывающие окна заблокированы по умолчанию, «Предотвращать межсайтовое отслеживание» включено"],
+ ["E","iPhone, приложение Яндекс или Яндекс Браузер","второй по массовости путь с iPhone из Директа"],
+ ["F","Windows, Chrome, экран 1366×768","самый массовый ПК; проверить, что калькулятор виден без прокрутки"],
+ ["G","Windows, Яндекс Браузер с «Защитой»","доля на ПК в России сопоставима с Chrome"],
+ ["H","Windows, Chrome с AdGuard или uBlock Origin","режут партнёрские ссылки и Метрику"],
+ {tier:"Расширенные: после первой недели, по фактическим браузерам из Метрики"},
+ ["I","Android, Samsung Internet с блокировщиком","у Samsung свой браузер по умолчанию"],
+ ["J","Android, Huawei Browser (без сервисов Google)","старый движок WebView"],
+ ["K","Android 9–10, старый WebView","телефоны 2019–2020 годов, доля заметная"],
+ ["L","Встроенный браузер Telegram и VK","если будем вести трафик из соцсетей"],
+ ["M","Mac, Safari","строгая защита от трекинга, ограничения окон"],
+ ["N","ПК, Firefox с усиленной защитой",""],
+ ["O","Windows с Kaspersky Protection в браузере","часто блокирует всплывающие окна и партнёрские редиректы"],
+ ["P","Любой браузер, инкогнито","нет localStorage и cookie"],
+ ["Q","Любой браузер, медленная сеть 3G и обрыв связи","окно партнёра, выдача, повторные клики"],
+ ["R","Любой браузер через VPN с зарубежным IP","партнёр может блокировать иностранные адреса"],
+ ["S","Тёмная тема и шрифт 150 %","читаемость и вёрстка"],
+];
+const KEY = ["1.1","3.1","3.2","3.7","4.4","5.1","10.1"];
+
+let state = {cases:{}, matrix:{}};
+let db = null, docRef = null, saveTimer = null;
+const $ = s => document.querySelector(s);
+const PR = {"К":"k","В":"v","Ж":"z"};
+
+function render(){
+  const root = $("#sections"); root.innerHTML = "";
+  for (const s of SECTIONS){
+    const sec = document.createElement("section");
+    sec.innerHTML = `<h2><span class="n">${s.n}</span>${s.t}<span class="cnt" data-cnt="${s.n}"></span></h2>`;
+    for (const [id, mode, pr, act, exp, later] of s.cases){
+      const d = document.createElement("div"); d.className = "case"; d.dataset.id = id;
+      d.innerHTML = `<div class="ctl">
+          <label title="прошёл"><input type="checkbox" class="ok" aria-label="Кейс ${id} прошёл"></label>
+          <label title="не прошёл"><input type="checkbox" class="x" aria-label="Кейс ${id} не прошёл"></label>
+        </div>
+        <div><div class="id">${id} <span class="pr ${PR[pr]}">${pr}</span> <span class="mode ${mode}">${mode === "A" ? "авто" : mode === "M" ? "руками" : "авто + руками"}</span>${later ? `<span class="later">${later}</span>` : ""}</div><div class="act">${act}</div><div class="exp">${exp}</div>
+        <textarea class="note" rows="1" placeholder="Заметка: устройство, браузер, что увидели" aria-label="Заметка к кейсу ${id}" hidden></textarea></div>`;
+      sec.appendChild(d);
+    }
+    root.appendChild(sec);
+  }
+  const m = $("#matrix");
+  let rows = `<thead><tr><th>Окружение</th>${KEY.map(k=>`<th>${k}</th>`).join("")}</tr></thead><tbody>`;
+  for (const e of ENVS){
+    if (e.tier) { rows += `<tr class="tier"><td colspan="${KEY.length+1}">${e.tier}</td></tr>`; continue; }
+    const [c,name,hint] = e;
+    rows += `<tr><td><b>${c}.</b> ${name}<small>${hint}</small></td>${KEY.map(k=>`<td><button type="button" class="cell" data-cell="${c}|${k}" aria-label="${name}, кейс ${k}"></button></td>`).join("")}</tr>`;
+  }
+  m.innerHTML = rows + `</tbody>`;
+  root.addEventListener("change", onCase);
+  root.addEventListener("input", onNote);
+  m.addEventListener("click", onCell);
+  apply();
+}
+function onCase(ev){
+  const inp = ev.target; if (!(inp instanceof HTMLInputElement)) return;
+  const el = inp.closest(".case"); const id = el.dataset.id;
+  const cur = state.cases[id] || {};
+  if (inp.classList.contains("ok")) cur.s = inp.checked ? "pass" : "";
+  else if (inp.classList.contains("x")) cur.s = inp.checked ? "fail" : "";
+  cur.t = Date.now();
+  state.cases[id] = cur; apply(); save();
+}
+function onNote(ev){
+  const ta = ev.target; if (!(ta instanceof HTMLTextAreaElement)) return;
+  const id = ta.closest(".case").dataset.id;
+  state.cases[id] = Object.assign(state.cases[id] || {}, {n: ta.value, t: Date.now()}); save(); counts();
+}
+function onCell(ev){
+  const b = ev.target.closest(".cell"); if (!b) return;
+  const k = b.dataset.cell; const cur = state.matrix[k] || "";
+  state.matrix[k] = cur === "" ? "pass" : cur === "pass" ? "fail" : "";
+  apply(); save();
+}
+function apply(){
+  document.querySelectorAll(".case").forEach(el => {
+    const c = state.cases[el.dataset.id] || {};
+    el.classList.toggle("pass", c.s === "pass"); el.classList.toggle("fail", c.s === "fail");
+    el.querySelector(".ok").checked = c.s === "pass"; el.querySelector(".x").checked = c.s === "fail";
+    const ta = el.querySelector(".note"); ta.hidden = !(c.s === "fail" || c.n); if (document.activeElement !== ta) ta.value = c.n || "";
+  });
+  document.querySelectorAll(".cell").forEach(b => { const v = state.matrix[b.dataset.cell] || ""; b.className = "cell" + (v ? " " + v[0] : ""); b.textContent = v === "pass" ? "✓" : v === "fail" ? "✗" : ""; });
+  counts();
+}
+function counts(){
+  let p = 0, f = 0, a = 0;
+  for (const s of SECTIONS){ let sp = 0; for (const [id] of s.cases){ a++; const st = (state.cases[id]||{}).s; if (st === "pass"){p++; sp++;} if (st === "fail") f++; }
+    const c = document.querySelector(`[data-cnt="${s.n}"]`); if (c) c.textContent = `${sp}/${s.cases.length}`; }
+  $("#np").textContent = p; $("#nf").textContent = f; $("#na").textContent = a;
+  $("#barp").style.width = (100*p/a) + "%"; $("#barf").style.width = (100*f/a) + "%";
+}
+function save(){
+  try { localStorage.setItem("gdv-tests", JSON.stringify(state)); } catch(e){}
+  if (!docRef) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { docRef.set({cases: state.cases, matrix: state.matrix, updated: Date.now()}).catch(()=>{}); }, 400);
+}
+function load(){
+  try { const s = JSON.parse(localStorage.getItem("gdv-tests") || "null"); if (s && s.cases) state = {cases: s.cases||{}, matrix: s.matrix||{}}; } catch(e){}
+}
+$("#reset").addEventListener("click", () => { if (!confirm("Снять все отметки и заметки?")) return; state = {cases:{}, matrix:{}}; apply(); save(); });
+
+load(); render();
+(async () => {
+  try {
+    db = await claude.use("db"); if (!db) return;
+    docRef = db.doc("tests/results");
+    const snap = await docRef.get();
+    if (snap.exists) { const d = snap.data(); state = {cases: d.cases||{}, matrix: d.matrix||{}}; apply(); }
+    else await docRef.set({cases: state.cases, matrix: state.matrix, updated: Date.now()});
+    const el = $("#sync"); el.className = "sync on"; el.textContent = "синхронизируется между устройствами";
+    docRef.onSnapshot(s => { if (!s.exists || s.metadata.hasPendingWrites) return; const d = s.data(); state = {cases: d.cases||{}, matrix: d.matrix||{}}; apply(); }, () => {});
+  } catch(e) {}
+})();
+</script>
