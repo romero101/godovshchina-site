@@ -89,6 +89,23 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   if (!document.getElementById("calc")) return;
 
+  // Кнопка «Показать точные цены» под калькулятором: сразу открываем выдачу партнёра
+  // с уже введёнными остатком, полом и возрастом — без повторного ввода. Дату рождения
+  // считаем из возраста (середина года), точную дату человек уточнит у партнёра при оформлении.
+  const heroCta = document.querySelector("#calc a[data-partner], .hero a[data-partner], a.cta[data-partner]");
+  if (heroCta && window.GDV && GDV.partnerUrl) heroCta.addEventListener("click", ev => {
+    const age = Number(document.getElementById("age").value) || 35;
+    const sexBtn = document.querySelector("#sex button[aria-pressed='true']");
+    const sex = sexBtn && sexBtn.dataset.v === "f" ? "f" : "m";
+    const dobISO = GDV.dobFromAge(age);
+    const pdob = document.getElementById("p-dob"); if (pdob && !pdob.value) pdob.value = dobISO;
+    const url = GDV.partnerUrl(GDV.bankId(), readBalance(), sex, dobISO);
+    ev.preventDefault();
+    try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {}
+    const w = window.open(url, "_blank", "noopener");
+    if (!w) location.href = url;
+  });
+
   const balance = document.getElementById("balance");
   const range = document.getElementById("balance-range");
   formatBalanceField(balance);
@@ -108,38 +125,59 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- Форма партнёра: своя мгновенная форма → выдача Полис812 в новой вкладке ---
+// Общие помощники (доступны калькулятору выше): ссылка партнёра, дата рождения из возраста, банк страницы.
+window.GDV = (function(){
+  const PARTNER_ID = "212866", YM_ID = "112294423";
+  const pad = n => String(n).padStart(2, "0");
+  return {
+    bankId() { const sel = document.getElementById("p-bank"); const f = document.getElementById("pform"); return (sel && sel.value) || (f && f.dataset.bankId) || "1"; },
+    dobFromAge(age) { const d = new Date(); d.setMonth(d.getMonth() - 6); d.setFullYear(d.getFullYear() - age); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); },
+    partnerUrl(bankId, debt, sex, dobISO) {
+      const [y, m, d] = String(dobISO).split("-");
+      const q = "bank_id=" + bankId + "&debt=" + debt + "&object_type=flat&sex=" + (sex === "f" ? "female" : "male") + "&dob=" + d + "." + m + "." + y + "&filter=all";
+      const params = btoa(unescape(encodeURIComponent(q)));
+      return "https://polis812.ru/mortgage/companies?params=" + encodeURIComponent(params) + "&partnerId=" + PARTNER_ID + "&partner=" + PARTNER_ID + "&partnerYmId=" + YM_ID + "&utm_source=godovshchina&utm_medium=site&utm_campaign=" + (location.pathname.replace(/\//g, "") || "main");
+    }
+  };
+})();
 (function(){
   const form = document.getElementById("pform");
   if (!form) return;
-  const PARTNER_ID = "212866", YM_ID = "112294423";
   const bal = document.getElementById("p-balance"), dob = document.getElementById("p-dob"), err = document.getElementById("p-err");
   const seg = document.getElementById("p-sex");
   let sex = "m";
   const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   const num = s => parseInt(String(s).replace(/\D/g, ""), 10) || 0;
-  // синхронизация с калькулятором выше
-  const mainBal = document.getElementById("balance"), mainSex = document.getElementById("sex");
+  // синхронизация с калькулятором выше: остаток, пол, дата рождения из возраста
+  const mainBal = document.getElementById("balance"), mainSex = document.getElementById("sex"), mainAge = document.getElementById("age");
   if (mainBal) { bal.value = mainBal.value; mainBal.addEventListener("input", () => { bal.value = mainBal.value; }); }
   if (mainSex) mainSex.addEventListener("click", ev => { const b = ev.target.closest("button[data-v]"); if (!b) return; sex = b.dataset.v; seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === sex)); });
+  if (mainAge && dob) { const sync = () => { const a = Number(mainAge.value); if (a >= 18 && a <= 70 && !dob.dataset.touched) dob.value = GDV.dobFromAge(a); }; sync(); mainAge.addEventListener("input", sync); dob.addEventListener("input", () => { dob.dataset.touched = "1"; }); }
   seg.addEventListener("click", ev => { const b = ev.target.closest("button[data-v]"); if (!b) return; sex = b.dataset.v; seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === sex)); });
   bal.addEventListener("blur", () => { const v = Math.min(50000000, Math.max(100000, num(bal.value))); bal.value = fmt(v); });
+
+  // Бэкенд цен: проверяем доступность один раз при загрузке. Пока его нет — кнопка открывает партнёра мгновенно,
+  // прямо в обработчике клика (иначе браузеры блокируют новую вкладку).
+  const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "http://127.0.0.1:8090/quote.php" : "https://api.polis-godovshchina.ru/quote.php";
+  let apiOk = false;
+  try {
+    const c = new AbortController(); setTimeout(() => c.abort(), 2500);
+    fetch(API, { method: "OPTIONS", signal: c.signal, mode: "cors" }).then(r => { apiOk = r.ok || r.status === 204 || r.status === 405; }).catch(() => { apiOk = false; });
+  } catch (e) {}
+
   form.addEventListener("submit", ev => {
     ev.preventDefault();
     if (!dob.value) { err.hidden = false; dob.focus(); return; }
     err.hidden = true;
-    const [y, m, d] = dob.value.split("-");
-    const bankSel = document.getElementById("p-bank");
-    const bankId = (bankSel && bankSel.value) || form.dataset.bankId || "1";
-    const q = "bank_id=" + bankId + "&debt=" + num(bal.value) + "&object_type=flat&sex=" + (sex === "f" ? "female" : "male") + "&dob=" + d + "." + m + "." + y + "&filter=all";
-    const params = btoa(unescape(encodeURIComponent(q)));
-    const url = "https://polis812.ru/mortgage/companies?params=" + encodeURIComponent(params) + "&partnerId=" + PARTNER_ID + "&partner=" + PARTNER_ID + "&partnerYmId=" + YM_ID + "&utm_source=godovshchina&utm_medium=site&utm_campaign=sber";
+    const bankId = GDV.bankId();
+    const url = GDV.partnerUrl(bankId, num(bal.value), sex, dob.value);
     try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {}
-    // Цены на нашей стороне через бэкенд (расчёт без персональных данных); если бэкенд недоступен — сразу к партнёру.
+    if (!apiOk) { const w = window.open(url, "_blank", "noopener"); if (!w) location.href = url; return; }
+    // Цены на нашей стороне через бэкенд (расчёт без персональных данных); если он не ответил за 3 с — ссылка к партнёру.
     const box = document.getElementById("offers") || (() => { const d = document.createElement("div"); d.id = "offers"; d.className = "offers"; form.insertAdjacentElement("afterend", d); return d; })();
     box.innerHTML = '<p class="note">Считаем цены страховых…</p>';
     const btn = document.getElementById("p-submit"); btn.disabled = true;
-    const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "http://127.0.0.1:8090/quote.php" : "https://api.polis-godovshchina.ru/quote.php";
-    const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 7000);
+    const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 3000);
     fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, signal: ctrl.signal,
       body: JSON.stringify({ bank_id: bankId, debt: num(bal.value), object_type: "flat", sex: sex === "f" ? "female" : "male", dob: dob.value }) })
       .then(r => r.json())
@@ -148,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderOffers(box, data, url);
         try { if (typeof ym === "function") ym(112294423, "reachGoal", "offers_shown"); } catch (e) {}
       })
-      .catch(() => { box.innerHTML = ""; window.open(url, "_blank", "noopener"); })
+      .catch(() => { apiOk = false; const w = window.open(url, "_blank", "noopener"); box.innerHTML = w ? "" : '<p class="note">Цены считаются у партнёра: <a class="cta" href="' + url + '" rel="nofollow sponsored noopener" target="_blank">Открыть предложения страховых →</a></p>'; })
       .finally(() => { clearTimeout(timer); btn.disabled = false; });
   });
   function renderOffers(box, data, fallbackUrl) {
