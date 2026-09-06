@@ -6,12 +6,12 @@
 import base64, json, os, re, urllib.parse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATE_ISO, DATE_RU = "2026-09-05", "5 сентября 2026"
+DATE_ISO, DATE_RU = "2026-09-06", "6 сентября 2026"
 PARTNER, YM = "212866", "112294423"
 COLORS = "%7B%22primary%22%3A%22%230B7A5B%22%2C%22secondary%22%3A%22%2314946F%22%2C%22accent%22%3A%22%2314213D%22%2C%22accentHover%22%3A%22%232A3B63%22%2C%22calculatorBlock1%22%3A%22%23F4F6F9%22%2C%22calculatorBlock2%22%3A%22%23D9F0E7%22%2C%22secondaryLight%22%3A%22%23FFFFFF%22%2C%22accentHoverLight%22%3A%22%239094a2%22%2C%22accentActive%22%3A%22%23121e37%22%2C%22calculatorBlock%22%3A%22%23F4F6F9%22%2C%22optionColor%22%3A%7B%22name%22%3A%22%D0%A7%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%22%2C%22val%22%3A%22%23303030%22%7D%2C%22backgroundColor%22%3A%22%23F7F8FA%22%7D"
 FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230B7A5B'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='36' fill='white'%3EГ%3C/text%3E%3C/svg%3E"
 FONTS = "https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=IBM+Plex+Sans:wght@400;500;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap"
-CSS_V, JS_V, MET_V = "9", "11", "2"
+CSS_V, JS_V, MET_V = "10", "11", "2"
 
 # slug, name, gen (кого/чего), loc (в ком/чём), polis_id, uplift_default, uplift_options[(value,label)],
 # uplift_text (фраза для текста), upload (как передать полис), cabinet (короткое имя канала), notes (особенности, список)
@@ -110,6 +110,44 @@ def wl_script(b):
 def pct(v):
     return v.replace(".", ",")
 
+def crumbs_ld(items):
+    return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i + 1, "name": n, "item": f"https://polis-godovshchina.ru{u}"} for i, (n, u) in enumerate(items)]}
+
+def crumbs_html(items):
+    parts = [f'<a href="{u}">{n}</a>' for n, u in items[:-1]] + [f'<span aria-current="page">{items[-1][0]}</span>']
+    return '<nav class="crumbs" aria-label="Вы здесь">' + ' <span class="sep">›</span> '.join(parts) + '</nav>'
+
+def svg_scenarios(slug, uplift, name):
+    """Схема «три сценария» с надбавкой банка: отказ = 2 150 000 × надбавка; полис банка 13 500; полис независимой 9 000."""
+    decline = round(2150000 * float(uplift) / 100)
+    mx = max(decline, 13500)
+    w = lambda v: round(560 * v / mx)
+    fmt = lambda v: f"{v:,}".replace(",", " ")
+    up = uplift.replace(".", ",")
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="720" height="300" role="img" aria-labelledby="t d">
+  <title id="t">Три сценария для ипотеки {name} на остатке 2 150 000 ₽</title>
+  <desc id="d">Отказ от страховки жизни при надбавке {up} п.п. — {fmt(decline)} ₽ в год; полис у страховщика банка — около 13 500 ₽; полис у независимой страховой — около 9 000 ₽.</desc>
+  <rect width="720" height="300" fill="#F4F6F9" rx="14"/>
+  <text x="32" y="44" font-family="Manrope, 'IBM Plex Sans', Arial, sans-serif" font-size="20" font-weight="800" fill="#14213D">{name}: что вы платите в год на остатке 2 150 000 ₽</text>
+  <text x="32" y="68" font-family="'IBM Plex Sans', Arial, sans-serif" font-size="13" fill="#5C6B82">Надбавка за отказ от страхования жизни — {up} п.п. Полис банка принят за +50 % к цене независимой страховой.</text>
+  <g font-family="'IBM Plex Sans', Arial, sans-serif" font-size="15" fill="#14213D">
+    <text x="32" y="118">Отказаться от страховки жизни (+{up} п.п. к ставке)</text>
+    <rect x="32" y="126" width="{w(decline)}" height="18" rx="9" fill="#B4530A"/>
+    <text x="{32 + w(decline) + 12}" y="141" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="500">{fmt(decline)} ₽</text>
+    <text x="32" y="184">Полис у страховщика банка</text>
+    <rect x="32" y="192" width="{w(13500)}" height="18" rx="9" fill="#5C6B82"/>
+    <text x="{32 + w(13500) + 12}" y="207" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="500">≈ 13 500 ₽</text>
+    <text x="32" y="250" font-weight="700">Полис у независимой страховой</text>
+    <rect x="32" y="258" width="{w(9000)}" height="18" rx="9" fill="#0B7A5B"/>
+    <text x="{32 + w(9000) + 12}" y="273" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="700" fill="#075C44">≈ 9 000 ₽</text>
+  </g>
+</svg>
+'''
+    d = os.path.join(ROOT, "assets", "img", "banks"); os.makedirs(d, exist_ok=True)
+    open(os.path.join(d, f"{slug}-scenarii.svg"), "w", encoding="utf-8").write(svg)
+    return f"/assets/img/banks/{slug}-scenarii.svg", decline
+
 def head(title, desc, path, ld_blocks, noindex=False):
     url = f"https://polis-godovshchina.ru{path}"
     ld = "\n".join(f'<script type="application/ld+json">\n{json.dumps(x, ensure_ascii=False)}\n</script>' for x in ld_blocks)
@@ -184,8 +222,10 @@ def bank_page(b, i):
     name, gen, loc = b["name"], b["gen"], b["loc"]
     path = f"/strahovka-ipoteki-{b['slug']}/"
     title = f"Страховка ипотеки {loc[2:] if loc.startswith('в ') else loc} {name if False else ''}".strip()
-    title = f"Страховка ипотеки {loc}: полис или надбавка к ставке, где дешевле — 2026"
-    desc = f"Страхование ипотеки {gen}: при отказе от страховки жизни {b['uptext']}. Калькулятор «полис или надбавка», цены аккредитованных страховых и как передать полис в банк."
+    title = f"Страховка ипотеки {loc}: полис или надбавка — 2026"
+    desc = f"Страхование ипотеки {gen}: без полиса жизни {b['uptext'].split(';')[0]}. Калькулятор «полис или надбавка», цены страховых и как передать полис в банк."[:158]
+    svg_path, decline = svg_scenarios(b["slug"], b["up"], name)
+    crumbs = [("Главная", "/"), ("Банки", "/banki/"), (name, path)]
     opts = "\n".join(f'            <option value="{v}"{" selected" if v == b["up"] else ""}>{lab}</option>' for v, lab in b["opts"])
     others = [x for x in BANKS if x["slug"] != b["slug"]]
     rel = others[i % len(others):][:2] + others[:2]
@@ -341,12 +381,22 @@ def bank_page(b, i):
 </main>
 
 {FOOTER}'''
-    return path, head(title, desc, path, [ld_faq]) + body
+    body = body.replace('<main>\n<section class="hero">', '<main>\n<div class="wrap">' + crumbs_html(crumbs) + '</div>\n<section class="hero">', 1)
+    example = f'''  <div class="callout">
+    <p><strong>Пример для {gen}.</strong> Остаток 2 150 000 ₽ — средний по России. Отказ от страховки жизни при надбавке {pct(b['up'])} п.п. — <span class="num">{f"{decline:,}".replace(",", " ")} ₽</span> переплаты в год. Полис у страховщика банка — около <span class="num">13 500 ₽</span>, у независимой страховой — около <span class="num">9 000 ₽</span>. {"Разница между отказом и полисом невелика — после 45–50 лет считайте внимательно." if decline < 16000 else "Полис выгоднее отказа почти в любом возрасте."}</p>
+  </div>
+  <figure class="fig">
+    <img src="{svg_path}" width="720" height="300" loading="lazy" alt="Три сценария для ипотеки {gen} на остатке 2 150 000 ₽: отказ — {f"{decline:,}".replace(",", " ")} ₽ в год, полис банка — около 13 500 ₽, полис независимой страховой — около 9 000 ₽">
+    <figcaption>Что стоит каждый вариант в год с надбавкой {name} {pct(b['up'])} п.п. Оценка на {DATE_RU}.</figcaption>
+  </figure>
+'''
+    body = body.replace('  <h2>Как это работает</h2>', example + '\n  <h2>Как это работает</h2>', 1)
+    return path, head(title, desc, path, [ld_faq, crumbs_ld(crumbs)]) + body
 
 def banks_hub():
     path = "/banki/"
-    title = "Страховка ипотеки по банкам: надбавка за отказ и куда передать полис — 2026"
-    desc = "Сводная таблица по 11 банкам: на сколько выше ставка без страховки жизни, куда загружать полис другой страховой, ссылки на калькулятор «полис или надбавка» для каждого банка."
+    title = "Страховка ипотеки по банкам: надбавки и куда передать полис"
+    desc = "Сводная таблица по 11 банкам: на сколько выше ставка без страховки жизни, куда загружать полис другой страховой, калькулятор «полис или надбавка» для каждого банка."
     rows = [f'      <tr><td><a href="/strahovka-ipoteki-sberbank/">Сбербанк</a></td><td>+1 п.п. (по части программ 1,5)</td><td>ДомКлик → «Загрузка полиса»</td></tr>']
     for b in BANKS:
         rows.append(f'      <tr><td><a href="/strahovka-ipoteki-{b["slug"]}/">{b["name"]}</a></td><td>{b["uptext"][0].upper() + b["uptext"][1:]}</td><td>{b["cabinet"][0].upper() + b["cabinet"][1:]}</td></tr>')
@@ -358,8 +408,10 @@ def banks_hub():
     ]
     ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]},
           {"@context": "https://schema.org", "@type": "ItemList", "name": "Страховка ипотеки по банкам", "itemListElement": [{"@type": "ListItem", "position": 1, "url": "https://polis-godovshchina.ru/strahovka-ipoteki-sberbank/", "name": "Сбербанк"}] + [{"@type": "ListItem", "position": i + 2, "url": f"https://polis-godovshchina.ru/strahovka-ipoteki-{b['slug']}/", "name": b["name"]} for i, b in enumerate(BANKS)]}]
+    crumbs = [("Главная", "/"), ("Банки", path)]
     body = f'''{header()}
 <main class="wrap narrow">
+  {crumbs_html(crumbs)}
   <section class="hero" style="background:none;padding-bottom:8px">
     <div class="eyebrow">11 банков · обновлено <time datetime="{DATE_ISO}">{DATE_RU}</time></div>
     <h1 style="margin-top:10px">Страховка ипотеки по банкам: надбавка за отказ и куда передать полис</h1>
@@ -369,6 +421,10 @@ def banks_hub():
   <div class="callout" id="summary" style="margin-top:20px">
     <p><strong>Коротко.</strong> Надбавка к ставке за отказ от страхования жизни у крупных банков в 2026 году: Банк ДОМ.РФ — 0,7 п.п.; Сбербанк, ВТБ, Газпромбанк — 1 п.п. (у Сбербанка по части программ 1,5); ПСБ — 2 п.п.; Альфа-Банк — от 1 до 3 п.п.; Россельхозбанк — 1–2 п.п., по отдельным программам до 3,5; Совкомбанк, Т-Банк, Уралсиб и МКБ закрепляют размер в договоре, ориентир 1 п.п. В любом банке заёмщик вправе купить полис у аккредитованной страховой, а не у страховщика банка, и передать его в банк сам: Сбербанк — через ДомКлик, ВТБ — ВТБ Онлайн, Альфа-Банк — Альфа-Онлайн, Т-Банк — чат приложения, Газпромбанк — e-mail банка, ДОМ.РФ — личный кабинет ипотеки.</p>
   </div>
+
+  <figure class="photo">
+    <img src="/assets/img/okno.jpg" srcset="/assets/img/okno-720.jpg 720w, /assets/img/okno.jpg 1440w" sizes="(max-width: 760px) 100vw, 720px" width="1440" height="960" loading="lazy" alt="Заёмщик со смартфоном у окна квартиры">
+  </figure>
 
   <h2>Сводная таблица</h2>
   <div class="tblwrap"><table>
@@ -421,20 +477,22 @@ def banks_hub():
 </main>
 
 {FOOTER}'''
-    return path, head(title, desc, path, ld) + body
+    return path, head(title, desc, path, ld + [crumbs_ld(crumbs)]) + body
 
 def ostatok_page():
     path = "/ostatok-dolga/"
-    title = "Остаток долга по ипотеке на дату продления страховки: калькулятор — 2026"
-    desc = "Посчитайте остаток основного долга по ипотеке на любую дату по сумме, ставке и сроку кредита. Нужен для страховой суммы при продлении полиса; учитывает аннуитетный график, без досрочных погашений."
+    title = "Остаток долга по ипотеке на дату продления: калькулятор"
+    desc = "Остаток основного долга по ипотеке на любую дату по сумме, ставке и сроку кредита — для страховой суммы при продлении полиса. Аннуитет, без досрочных погашений."
     faq = [
         ("Зачем знать остаток долга для страховки?", "Страховая сумма в полисе ипотечного страхования равна остатку основного долга на дату продления (у некоторых банков — плюс проценты за год). Занизите — банк вернёт полис, завысите — переплатите за страховку."),
         ("Где взять точный остаток?", "В приложении банка или в графике платежей к договору. Этот калькулятор нужен, когда под рукой нет приложения: он считает по аннуитетной формуле и не знает о ваших досрочных погашениях."),
         ("Почему остаток уменьшается медленно?", "При аннуитете первые годы большая часть платежа уходит на проценты. При ставке 18 % и сроке 20 лет за первый год гасится лишь около 1 % долга — поэтому и цена страховки почти не падает."),
     ]
     ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}]
+    crumbs = [("Главная", "/"), ("Остаток долга", path)]
     body = f'''{header()}
 <main class="wrap narrow">
+  {crumbs_html(crumbs)}
   <section class="hero" style="background:none;padding-bottom:8px">
     <div class="eyebrow">Инструмент · обновлено <time datetime="{DATE_ISO}">{DATE_RU}</time></div>
     <h1 style="margin-top:10px">Остаток долга по ипотеке на дату продления страховки</h1>
@@ -468,6 +526,22 @@ def ostatok_page():
     <p><strong>Коротко.</strong> Остаток долга по ипотеке на нужную дату считается по аннуитетной формуле: остаток после k платежей = S·(1+r)<sup>k</sup> − A·((1+r)<sup>k</sup> − 1)/r, где S — сумма кредита, r — месячная ставка (годовая/12), A — ежемесячный платёж. Именно эта сумма (у некоторых банков плюс проценты за год) идёт в полис как страховая сумма при продлении. Точный остаток всегда есть в приложении банка; калькулятор не учитывает досрочные погашения.</p>
   </div>
 
+  <h2>Как остаток влияет на цену страховки</h2>
+  <p>Полис квартиры стоит около 0,05 % от страховой суммы, полис жизни — от 0,07 % до 0,7 % в зависимости от возраста. Поэтому каждый лишний миллион в страховой сумме — это плюс 500 ₽ за квартиру и от 700 до 7 000 ₽ за жизнь в год. Указывать сумму «с запасом» невыгодно, а занизить нельзя: банк сверит её с остатком по кредиту и вернёт полис на переделку.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Кредит</th><th>Ставка</th><th>Срок</th><th class="n">Остаток через 1 год</th><th class="n">Через 3 года</th><th class="n">Через 5 лет</th></tr></thead>
+    <tbody>
+      <tr><td>3 000 000 ₽</td><td>6 % (льготная)</td><td>20 лет</td><td class="n">2 912 000</td><td class="n">2 720 000</td><td class="n">2 504 000</td></tr>
+      <tr><td>5 000 000 ₽</td><td>12 %</td><td>20 лет</td><td class="n">4 933 000</td><td class="n">4 782 000</td><td class="n">4 590 000</td></tr>
+      <tr><td>5 000 000 ₽</td><td>18 %</td><td>25 лет</td><td class="n">4 979 000</td><td class="n">4 928 000</td><td class="n">4 856 000</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Аннуитетный график без досрочных погашений; цифры округлены до тысяч. При высокой ставке остаток первые годы почти не уменьшается — и страховка почти не дешевеет, пока не начнутся досрочные погашения.</p>
+
+  <figure class="photo">
+    <img src="/assets/img/kalendar.jpg" srcset="/assets/img/kalendar-720.jpg 720w, /assets/img/kalendar.jpg 1440w" sizes="(max-width: 760px) 100vw, 720px" width="1440" height="960" loading="lazy" alt="Смартфон с календарём, документ и ключи от квартиры на столе">
+  </figure>
+
   <h2 id="faq">Вопросы</h2>
   <div class="faq">
 {chr(10).join(f"    <details><summary>{q}</summary><p>{a}</p></details>" for q, a in faq)}
@@ -482,7 +556,7 @@ def ostatok_page():
 </main>
 
 {FOOTER}'''
-    return path, head(title, desc, path, ld) + body
+    return path, head(title, desc, path, ld + [crumbs_ld(crumbs)]) + body
 
 def write(path, html):
     d = os.path.join(ROOT, path.strip("/"))

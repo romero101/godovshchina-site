@@ -41,6 +41,13 @@ li{margin:0 0 6px;max-width:66ch}
 .note{font-size:14px;color:var(--muted)}
 strong{font-weight:700}
 
+/* breadcrumbs */
+.crumbs{font-size:13px;color:var(--muted);padding:14px 0 0;display:flex;flex-wrap:wrap;gap:6px}
+.crumbs a{color:var(--muted);text-decoration:none}
+.crumbs a:hover{color:var(--accent-ink);text-decoration:underline}
+.crumbs .sep{color:var(--line)}
+.crumbs [aria-current]{color:var(--ink)}
+
 /* hero */
 .hero{background:var(--band);padding:36px 0 32px}
 .hero .grid{display:grid;grid-template-columns:1fr 1.05fr;gap:32px;align-items:start}

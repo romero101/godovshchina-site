@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Остаток долга по ипотеке на дату продления страховки: калькулятор — 2026</title>
-<meta name="description" content="Посчитайте остаток основного долга по ипотеке на любую дату по сумме, ставке и сроку кредита. Нужен для страховой суммы при продлении полиса; учитывает аннуитетный график, без досрочных погашений.">
+<title>Остаток долга по ипотеке на дату продления: калькулятор</title>
+<meta name="description" content="Остаток основного долга по ипотеке на любую дату по сумме, ставке и сроку кредита — для страховой суммы при продлении полиса. Аннуитет, без досрочных погашений.">
 <link rel="canonical" href="https://polis-godovshchina.ru/ostatok-dolga/">
 
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:url" content="https://polis-godovshchina.ru/ostatok-dolga/">
-<meta property="og:title" content="Остаток долга по ипотеке на дату продления страховки: калькулятор — 2026">
-<meta property="og:description" content="Посчитайте остаток основного долга по ипотеке на любую дату по сумме, ставке и сроку кредита. Нужен для страховой суммы при продлении полиса; учитывает аннуитетный график, без досрочных погашений.">
+<meta property="og:title" content="Остаток долга по ипотеке на дату продления: калькулятор">
+<meta property="og:description" content="Остаток основного долга по ипотеке на любую дату по сумме, ставке и сроку кредита — для страховой суммы при продлении полиса. Аннуитет, без досрочных погашений.">
 <meta property="og:site_name" content="Годовщина">
 <meta property="og:image" content="https://polis-godovshchina.ru/assets/img/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -20,11 +20,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://polis812.ru">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=IBM+Plex+Sans:wght@400;500;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
-<link rel="stylesheet" href="/assets/style.css?v=9">
+<link rel="stylesheet" href="/assets/style.css?v=10">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230B7A5B'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='36' fill='white'%3EГ%3C/text%3E%3C/svg%3E">
 <meta name="yandex-verification" content="91ee931dc425b640">
 <script type="application/ld+json">
 {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Зачем знать остаток долга для страховки?", "acceptedAnswer": {"@type": "Answer", "text": "Страховая сумма в полисе ипотечного страхования равна остатку основного долга на дату продления (у некоторых банков — плюс проценты за год). Занизите — банк вернёт полис, завысите — переплатите за страховку."}}, {"@type": "Question", "name": "Где взять точный остаток?", "acceptedAnswer": {"@type": "Answer", "text": "В приложении банка или в графике платежей к договору. Этот калькулятор нужен, когда под рукой нет приложения: он считает по аннуитетной формуле и не знает о ваших досрочных погашениях."}}, {"@type": "Question", "name": "Почему остаток уменьшается медленно?", "acceptedAnswer": {"@type": "Answer", "text": "При аннуитете первые годы большая часть платежа уходит на проценты. При ставке 18 % и сроке 20 лет за первый год гасится лишь около 1 % долга — поэтому и цена страховки почти не падает."}}]}
+</script>
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Главная", "item": "https://polis-godovshchina.ru/"}, {"@type": "ListItem", "position": 2, "name": "Остаток долга", "item": "https://polis-godovshchina.ru/ostatok-dolga/"}]}
 </script>
 </head>
 <body>
@@ -41,8 +44,9 @@
 </header>
 
 <main class="wrap narrow">
+  <nav class="crumbs" aria-label="Вы здесь"><a href="/">Главная</a> <span class="sep">›</span> <span aria-current="page">Остаток долга</span></nav>
   <section class="hero" style="background:none;padding-bottom:8px">
-    <div class="eyebrow">Инструмент · обновлено <time datetime="2026-09-05">5 сентября 2026</time></div>
+    <div class="eyebrow">Инструмент · обновлено <time datetime="2026-09-06">6 сентября 2026</time></div>
     <h1 style="margin-top:10px">Остаток долга по ипотеке на дату продления страховки</h1>
     <p class="lede" style="margin-top:14px">Страховая сумма в полисе — это остаток основного долга. Если приложения банка под рукой нет, посчитайте по условиям договора: сумма, ставка, срок, дата первого платежа.</p>
   </section>
@@ -73,6 +77,22 @@
   <div class="callout" id="summary">
     <p><strong>Коротко.</strong> Остаток долга по ипотеке на нужную дату считается по аннуитетной формуле: остаток после k платежей = S·(1+r)<sup>k</sup> − A·((1+r)<sup>k</sup> − 1)/r, где S — сумма кредита, r — месячная ставка (годовая/12), A — ежемесячный платёж. Именно эта сумма (у некоторых банков плюс проценты за год) идёт в полис как страховая сумма при продлении. Точный остаток всегда есть в приложении банка; калькулятор не учитывает досрочные погашения.</p>
   </div>
+
+  <h2>Как остаток влияет на цену страховки</h2>
+  <p>Полис квартиры стоит около 0,05 % от страховой суммы, полис жизни — от 0,07 % до 0,7 % в зависимости от возраста. Поэтому каждый лишний миллион в страховой сумме — это плюс 500 ₽ за квартиру и от 700 до 7 000 ₽ за жизнь в год. Указывать сумму «с запасом» невыгодно, а занизить нельзя: банк сверит её с остатком по кредиту и вернёт полис на переделку.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Кредит</th><th>Ставка</th><th>Срок</th><th class="n">Остаток через 1 год</th><th class="n">Через 3 года</th><th class="n">Через 5 лет</th></tr></thead>
+    <tbody>
+      <tr><td>3 000 000 ₽</td><td>6 % (льготная)</td><td>20 лет</td><td class="n">2 912 000</td><td class="n">2 720 000</td><td class="n">2 504 000</td></tr>
+      <tr><td>5 000 000 ₽</td><td>12 %</td><td>20 лет</td><td class="n">4 933 000</td><td class="n">4 782 000</td><td class="n">4 590 000</td></tr>
+      <tr><td>5 000 000 ₽</td><td>18 %</td><td>25 лет</td><td class="n">4 979 000</td><td class="n">4 928 000</td><td class="n">4 856 000</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Аннуитетный график без досрочных погашений; цифры округлены до тысяч. При высокой ставке остаток первые годы почти не уменьшается — и страховка почти не дешевеет, пока не начнутся досрочные погашения.</p>
+
+  <figure class="photo">
+    <img src="/assets/img/kalendar.jpg" srcset="/assets/img/kalendar-720.jpg 720w, /assets/img/kalendar.jpg 1440w" sizes="(max-width: 760px) 100vw, 720px" width="1440" height="960" loading="lazy" alt="Смартфон с календарём, документ и ключи от квартиры на столе">
+  </figure>
 
   <h2 id="faq">Вопросы</h2>
   <div class="faq">

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="720" height="300" role="img" aria-labelledby="t d">
+  <title id="t">Три сценария для ипотеки Банк ДОМ.РФ на остатке 2 150 000 ₽</title>
+  <desc id="d">Отказ от страховки жизни при надбавке 0,7 п.п. — 15 050 ₽ в год; полис у страховщика банка — около 13 500 ₽; полис у независимой страховой — около 9 000 ₽.</desc>
+  <rect width="720" height="300" fill="#F4F6F9" rx="14"/>
+  <text x="32" y="44" font-family="Manrope, 'IBM Plex Sans', Arial, sans-serif" font-size="20" font-weight="800" fill="#14213D">Банк ДОМ.РФ: что вы платите в год на остатке 2 150 000 ₽</text>
+  <text x="32" y="68" font-family="'IBM Plex Sans', Arial, sans-serif" font-size="13" fill="#5C6B82">Надбавка за отказ от страхования жизни — 0,7 п.п. Полис банка принят за +50 % к цене независимой страховой.</text>
+  <g font-family="'IBM Plex Sans', Arial, sans-serif" font-size="15" fill="#14213D">
+    <text x="32" y="118">Отказаться от страховки жизни (+0,7 п.п. к ставке)</text>
+    <rect x="32" y="126" width="560" height="18" rx="9" fill="#B4530A"/>
+    <text x="604" y="141" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="500">15 050 ₽</text>
+    <text x="32" y="184">Полис у страховщика банка</text>
+    <rect x="32" y="192" width="502" height="18" rx="9" fill="#5C6B82"/>
+    <text x="546" y="207" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="500">≈ 13 500 ₽</text>
+    <text x="32" y="250" font-weight="700">Полис у независимой страховой</text>
+    <rect x="32" y="258" width="335" height="18" rx="9" fill="#0B7A5B"/>
+    <text x="379" y="273" font-family="'IBM Plex Mono', Menlo, monospace" font-size="15" font-weight="700" fill="#075C44">≈ 9 000 ₽</text>
+  </g>
+</svg>
