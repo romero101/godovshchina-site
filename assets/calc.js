@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const pdob = document.getElementById("p-dob"); if (pdob && !pdob.value) pdob.value = dobISO;
     const url = GDV.partnerUrl(GDV.bankId(), readBalance(), sex, dobISO);
     ev.preventDefault();
-    try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {}
+    // цель partner_click для ссылок a[data-partner] засчитывает metrika.js, здесь не дублируем
     GDV.open(url);
   });
 
@@ -135,7 +135,8 @@ window.GDV = (function(){
   return {
     // Новая вкладка партнёра. Без флага "noopener" в window.open: с ним браузер по спецификации возвращает null,
     // и запасной переход в той же вкладке срабатывал всегда — открывались и вкладка, и переход. Opener обнуляем вручную.
-    open(url) { let w = null; try { w = window.open(url, "_blank"); } catch (e) {} if (w) { try { w.opener = null; } catch (e) {} return true; } location.href = url; return false; },
+    _last: 0,
+    open(url) { const now = Date.now(); if (now - this._last < 1500) return true; this._last = now; let w = null; try { w = window.open(url, "_blank"); } catch (e) {} if (w) { try { w.opener = null; } catch (e) {} return true; } location.href = url; return false; },
     bankId() { const sel = document.getElementById("p-bank"); const f = document.getElementById("pform"); return (sel && sel.value) || (f && f.dataset.bankId) || "1"; },
     dobFromAge(age) { const d = new Date(); d.setMonth(d.getMonth() - 6); d.setFullYear(d.getFullYear() - age); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); },
     partnerUrl(bankId, debt, sex, dobISO) {
@@ -178,7 +179,8 @@ window.GDV = (function(){
     err.hidden = true;
     const bankId = GDV.bankId();
     const url = GDV.partnerUrl(bankId, num(bal.value), sex, dob.value);
-    try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {}
+    const dup = Date.now() - GDV._last < 1500;
+    if (!dup) { try { if (typeof ym === "function") ym(112294423, "reachGoal", "partner_click"); } catch (e) {} }
     if (!apiOk) { GDV.open(url); return; }
     // Цены на нашей стороне через бэкенд (расчёт без персональных данных); если он не ответил за 3 с — ссылка к партнёру.
     const box = document.getElementById("offers") || (() => { const d = document.createElement("div"); d.id = "offers"; d.className = "offers"; form.insertAdjacentElement("afterend", d); return d; })();
