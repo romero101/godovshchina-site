@@ -301,9 +301,19 @@ for (const env of ENVS) {
   // ---------- Ежемесячно ----------
   if (MODE === "monthly" && on("1.1")) {
     for (const p of ["/strahovka-ipoteki-sberbank/", "/kalkulyator-strahovaniya-ipoteki/"]) {
-      const r = await fetch("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=" + encodeURIComponent(LIVE_HOST + p) + "&strategy=mobile&category=performance", { signal: AbortSignal.timeout(120000) }).then(r => r.json()).catch(e => ({ error: { message: e.message } }));
+      // Основной замер — PageSpeed Insights (без ключа общая квота часто исчерпана; ключ можно положить в ~/.config/pagespeed-key)
+      let key = ""; try { key = fs.readFileSync(path.join(process.env.HOME || "", ".config/pagespeed-key"), "utf8").trim(); } catch {}
+      const r = await fetch("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=" + encodeURIComponent(LIVE_HOST + p) + "&strategy=mobile&category=performance" + (key ? "&key=" + key : ""), { signal: AbortSignal.timeout(120000) }).then(r => r.json()).catch(e => ({ error: { message: e.message } }));
       const a = r.lighthouseResult?.audits; const lcp = a?.["largest-contentful-paint"]?.numericValue, cls = a?.["cumulative-layout-shift"]?.numericValue, perf = r.lighthouseResult?.categories?.performance?.score;
-      rec(E, "1.1", lcp == null ? null : lcp <= 2500 && cls <= 0.1, lcp == null ? "PageSpeed недоступен: " + (r.error?.message || "?").slice(0, 80) : `${p}: LCP ${Math.round(lcp)} мс, CLS ${cls.toFixed(3)}, performance ${Math.round(perf * 100)}`);
+      if (lcp != null) { rec(E, "1.1", lcp <= 2500 && cls <= 0.1, `PageSpeed ${p}: LCP ${Math.round(lcp)} мс, CLS ${cls.toFixed(3)}, performance ${Math.round(perf * 100)}`); continue; }
+      // Запасной замер: Chromium с эмуляцией медленного 4G и слабого процессора (как у PageSpeed «мобильный»)
+      const b = await chromium.launch(); const ctx = await b.newContext({ ...devices["Galaxy S9+"], ignoreHTTPSErrors: true });
+      const page = await ctx.newPage(); const cdp = await ctx.newCDPSession(page);
+      await cdp.send("Network.enable"); await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 1.6 * 1024 * 1024 / 8, uploadThroughput: 750 * 1024 / 8 }); await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+      await page.addInitScript(() => { window.__lcp = 0; window.__cls = 0; new PerformanceObserver(l => { for (const e of l.getEntries()) window.__lcp = e.startTime; }).observe({ type: "largest-contentful-paint", buffered: true }); new PerformanceObserver(l => { for (const e of l.getEntries()) if (!e.hadRecentInput) window.__cls += e.value; }).observe({ type: "layout-shift", buffered: true }); });
+      await page.goto(LIVE_HOST + p, { waitUntil: "load" }); await page.waitForTimeout(3000);
+      const m = await page.evaluate(() => ({ lcp: window.__lcp, cls: window.__cls })); await b.close();
+      rec(E, "1.1", m.lcp > 0 && m.lcp <= 2500 && m.cls <= 0.1, `локальная эмуляция «медленный 4G, CPU ×4» ${p}: LCP ${Math.round(m.lcp)} мс, CLS ${m.cls.toFixed(3)} (PageSpeed недоступен: ${(r.error?.message || "?").slice(0, 60)})`);
     }
   }
   if (MODE === "monthly" && ["2.9", "3.6"].some(on)) await withPage(env, { id: "2.9/3.6", realPartner: true }, async (page, ctx) => {
@@ -312,7 +322,9 @@ for (const env of ENVS) {
     const url = await page.evaluate(() => GDV.partnerUrl("1", 2500000, "m", GDV.dobFromAge(40)));
     const p2 = await ctx.newPage(); const t0 = Date.now(); let prices = [], secs = null;
     await p2.goto(url, { waitUntil: "commit", timeout: 60000 }).catch(() => {});
-    for (let i = 0; i < 45; i++) { await p2.waitForTimeout(1000); const txt = await p2.evaluate(() => document.body.innerText).catch(() => ""); prices = [...new Set((txt.match(/(\d[\d\s]{2,})\s?₽/g) || []).map(s => Number(s.replace(/\D/g, ""))))].filter(n => n >= 1000 && n < 200000); if (prices.length >= 3) { secs = (Date.now() - t0) / 1000; break; } }
+    // время до первых цен (3.6) и полный список после стабилизации: партнёр догружает предложения постепенно (2.9)
+    let stable = 0, lastCount = 0;
+    for (let i = 0; i < 60; i++) { await p2.waitForTimeout(1000); const txt = await p2.evaluate(() => document.body.innerText).catch(() => ""); prices = [...new Set((txt.match(/(\d[\d\s]{2,})\s?₽/g) || []).map(s => Number(s.replace(/\D/g, ""))))].filter(n => n >= 1000 && n < 200000); if (prices.length >= 3 && secs == null) secs = (Date.now() - t0) / 1000; if (secs != null) { stable = prices.length === lastCount ? stable + 1 : 0; lastCount = prices.length; if (stable >= 4) break; } }
     const min = prices.length ? Math.min(...prices) : null;
     if (on("3.6")) rec(E, "3.6", secs != null && secs <= 10, secs == null ? "цены партнёра не появились за 45 с" : `цены Полис812 через ${secs.toFixed(1)} с (${prices.length} предложений)`);
     if (on("2.9")) rec(E, "2.9", min != null && est > 0 && Math.abs(est - min) / min <= 0.25, min == null ? "нет цен партнёра для сравнения" : `калькулятор ${est} ₽, минимум у партнёра ${min} ₽, расхождение ${Math.round(Math.abs(est - min) / min * 100)} %`);
