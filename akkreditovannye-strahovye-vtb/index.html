@@ -50,6 +50,49 @@
     <h1 style="margin-top:10px">Аккредитованные страховые компании ВТБ по ипотеке</h1>
     <p class="lede" style="margin-top:14px">15 компаний, чьи полисы ВТБ принимает без вопросов. Цены у них для одного и того же заёмщика различаются до 2,5 раза — список нужен не сам по себе, а чтобы сравнить.</p>
   </section>
+  <form class="calc" id="calc" onsubmit="return false" aria-labelledby="calc-title" style="margin-top:18px">
+    <h2 id="calc-title">Посчитайте свой случай</h2>
+    <p class="sub">Три цифры и ответ — за минуту, без регистрации.</p>
+    <div class="row">
+      <label class="full">Остаток по кредиту, ₽
+        <input type="text" id="balance" value="3000000" inputmode="numeric" autocomplete="off">
+        <input type="range" id="balance-range" min="300000" max="15000000" step="50000" value="3000000" aria-label="Остаток по кредиту">
+      </label>
+      <label>Возраст заёмщика
+        <input type="number" id="age" value="35" min="18" max="70" inputmode="numeric">
+      </label>
+      <div class="field"><span class="lbl" id="sex-lbl">Пол</span>
+        <div class="seg" id="sex" role="group" aria-labelledby="sex-lbl">
+          <button type="button" data-v="m" aria-pressed="true">Мужской</button>
+          <button type="button" data-v="f" aria-pressed="false">Женский</button>
+        </div>
+      </div>
+      <label class="full">Надбавка к ставке, если отказаться от страховки жизни
+        <select id="uplift">
+          <option value="1" selected>+1 % — стандартная надбавка ВТБ</option>
+          <option value="2">+2 % — если отказались и от жизни, и от титула</option>
+        </select>
+      </label>
+    </div>
+    <noscript><p class="note">Калькулятору нужен JavaScript. Без него переходите к точным ценам по форме ниже.</p></noscript>
+    <div class="result" aria-live="polite" aria-atomic="true">
+      <p class="k" id="big-k">Ваша экономия в год</p>
+      <p class="big" id="big">0 ₽</p>
+      <p class="verdict" id="verdict"></p>
+      <div class="rows">
+        <div class="rw" id="r-decline"><span>Отказаться от страховки</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+        <div class="rw" id="r-captive"><span>Полис у страховщика банка</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+        <div class="rw" id="r-indep"><span>Полис у страховой из списка банка</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+      </div>
+      <a class="cta" data-partner href="#oformit">Показать точные цены страховых →</a>
+      <p class="trust"><span class="ad">Реклама</span>Цены и оформление — на сайте партнёра Полис812 (ООО «СВЦ ПОЛИС812»), форма ниже на этой странице. Цена — по тарифу страховой, без наценки сайта; показываются компании, аккредитованные ВТБ.</p>
+    </div>
+    <details class="how">
+      <summary>Как мы считаем</summary>
+      <p>Оценка, не оферта. Тарифы страховых откалиброваны по реальным расчётам на 4 сентября 2026 г. (остаток 3 000 000 ₽, мужчина 27 лет — от 3 900 ₽, 40 лет — от 6 600 ₽ за жизнь и квартиру). Полис страховщика банка принят за +50 % к цене независимой компании. Точную цену покажет расчёт по кнопке.</p>
+    </details>
+  </form>
+
 
   <div class="callout" id="summary" style="margin-top:20px">
     <p><strong>Коротко.</strong> На 6 сентября 2026 в списке страховых ВТБ по ипотеке 15 компаний: ВТБ Страхование, ВСК, АльфаСтрахование, Абсолют Страхование, ЭРГО, СК «Пульс», Совкомбанк Страхование, Zetta Страхование, СОГАЗ, Ренессанс Страхование, Ингосстрах, Росгосстрах, ПАРИ, Югория, Энергогарант. С 1 сентября 2023 года (постановление Правительства РФ № 39 от 18.01.2023) аккредитация страховых банками отменена: банк обязан принять полис любой страховой с кредитным рейтингом не ниже A- (ruA- / A-(RU)), если полис соответствует его требованиям к покрытию. Списки «аккредитованных» на сайтах банков — это партнёры, которых банк проверил заранее; ориентируйтесь на них, но право выбора шире. Если отказаться от страхования жизни, ставка выше на 1 п.п.; за отказ от титульного страхования — ещё на 1 п.п.. После оплаты полис и чек передаёт в банк заёмщик: полис и чек загрузите в приложении ВТБ Онлайн в разделе вашей ипотеки (страхование) или отправьте в чат поддержки; принимают и в офисе. Проверка обычно занимает до трёх рабочих дней.</p>
@@ -150,7 +193,7 @@
     <p>Оператор сайта — ИП Роман, ИНН 526109316232. <a href="/privacy/">Политика конфиденциальности</a>. Информация не является офертой; условия по вашему кредитному договору уточняйте в банке.</p>
   </div>
 </footer>
-<script src="/assets/calc.js?v=15"></script>
+<script src="/assets/calc.js?v=16"></script>
 <script src="/assets/metrika.js?v=3"></script>
 </body>
 </html>

@@ -53,6 +53,50 @@
     <h1 style="margin-top:10px">Как продлить страховку по ипотеке: онлайн, дешевле и без штрафа</h1>
     <p class="lede" style="margin-top:14px">Продление — это новый договор на новый остаток долга. Его можно оформить в любой страховой с рейтингом не ниже A-, а не только там, где покупали в прошлом году. Четыре шага и одно напоминание.</p>
   </section>
+  <form class="calc" id="calc" onsubmit="return false" aria-labelledby="calc-title" style="margin-top:18px">
+    <h2 id="calc-title">Посчитайте свой случай</h2>
+    <p class="sub">Три цифры и ответ — за минуту, без регистрации.</p>
+    <div class="row">
+      <label class="full">Остаток по кредиту, ₽
+        <input type="text" id="balance" value="3000000" inputmode="numeric" autocomplete="off">
+        <input type="range" id="balance-range" min="300000" max="15000000" step="50000" value="3000000" aria-label="Остаток по кредиту">
+      </label>
+      <label>Возраст заёмщика
+        <input type="number" id="age" value="35" min="18" max="70" inputmode="numeric">
+      </label>
+      <div class="field"><span class="lbl" id="sex-lbl">Пол</span>
+        <div class="seg" id="sex" role="group" aria-labelledby="sex-lbl">
+          <button type="button" data-v="m" aria-pressed="true">Мужской</button>
+          <button type="button" data-v="f" aria-pressed="false">Женский</button>
+        </div>
+      </div>
+      <label class="full">Надбавка к ставке, если отказаться от страховки жизни
+        <select id="uplift">
+          <option value="1" selected>+1 % — типичная надбавка банка</option>
+          <option value="2">+2 % — если ваш банк берёт больше (проверьте договор)</option>
+          <option value="0.5">+0,5 % — если надбавка меньше</option>
+        </select>
+      </label>
+    </div>
+    <noscript><p class="note">Калькулятору нужен JavaScript. Без него переходите к точным ценам по форме ниже.</p></noscript>
+    <div class="result" aria-live="polite" aria-atomic="true">
+      <p class="k" id="big-k">Ваша экономия в год</p>
+      <p class="big" id="big">0 ₽</p>
+      <p class="verdict" id="verdict"></p>
+      <div class="rows">
+        <div class="rw" id="r-decline"><span>Отказаться от страховки</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+        <div class="rw" id="r-captive"><span>Полис у страховщика банка</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+        <div class="rw" id="r-indep"><span>Полис у страховой из списка банка</span><span class="v">0 ₽</span><div class="track"><div class="fill"></div></div></div>
+      </div>
+      <a class="cta" data-partner href="#oformit">Показать точные цены страховых →</a>
+      <p class="trust"><span class="ad">Реклама</span>Цены и оформление — на сайте партнёра Полис812 (ООО «СВЦ ПОЛИС812»), форма ниже на этой странице. Цена — по тарифу страховой, без наценки сайта; показываются компании из списка вашего банка.</p>
+    </div>
+    <details class="how">
+      <summary>Как мы считаем</summary>
+      <p>Оценка, не оферта. Тарифы страховых откалиброваны по реальным расчётам на 4 сентября 2026 г. (остаток 3 000 000 ₽, мужчина 27 лет — от 3 900 ₽, 40 лет — от 6 600 ₽ за жизнь и квартиру). Полис страховщика банка принят за +50 % к цене независимой компании. Точную цену покажет расчёт по кнопке.</p>
+    </details>
+  </form>
+
 
   <div class="callout" id="summary" style="margin-top:20px">
     <p><strong>Коротко.</strong> Страховку по ипотеке продлевают ежегодно: за 2–4 недели до окончания полиса узнайте остаток долга в приложении банка, сравните цены страховых на этот остаток, оплатите полис онлайн и загрузите полис с чеком в приложение банка (Сбербанк — ДомКлик, ВТБ — ВТБ Онлайн, Альфа-Банк — Альфа-Онлайн, ДОМ.РФ — личный кабинет ипотеки). Менять страховую можно каждый год: с 1 сентября 2023 года банк обязан принять полис любой компании с рейтингом не ниже A-. Если не продлить вовремя, банк повысит ставку по договору (обычно на 1–2 п.п.) и может начислить неустойку; после загрузки полиса ставку возвращают.</p>
@@ -155,7 +199,7 @@
     <p>Оператор сайта — ИП Роман, ИНН 526109316232. <a href="/privacy/">Политика конфиденциальности</a>. Информация не является офертой; условия по вашему кредитному договору уточняйте в банке.</p>
   </div>
 </footer>
-<script src="/assets/calc.js?v=15"></script>
+<script src="/assets/calc.js?v=16"></script>
 <script src="/assets/metrika.js?v=3"></script>
 </body>
 </html>

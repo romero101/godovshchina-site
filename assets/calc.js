@@ -5,6 +5,7 @@
    Остальные возраста — интерполяция; точную цену показывает партнёрский калькулятор. */
 
 // ЕДИНСТВЕННОЕ МЕСТО, ГДЕ МЕНЯЕТСЯ ПАРТНЁРСКАЯ ССЫЛКА.
+// v16 (9 сентября 2026): click_id в ссылке, whiteLabel для Сбербанка, цель partner_open по факту открытия партнёра.
 
 const RATE_PROPERTY = 0.0005; // страховка квартиры: ~1 500 ₽ на 3 000 000 ₽
 const CAPTIVE_MARKUP = 1.5;   // полис у банка дороже страховой из списка на 30–60 % → берём 50 %
@@ -136,14 +137,24 @@ window.GDV = (function(){
     // Новая вкладка партнёра. Без флага "noopener" в window.open: с ним браузер по спецификации возвращает null,
     // и запасной переход в той же вкладке срабатывал всегда — открывались и вкладка, и переход. Opener обнуляем вручную.
     _last: 0,
-    open(url) { const now = Date.now(); if (now - this._last < 1500) return true; this._last = now; let w = null; try { w = window.open(url, "_blank"); } catch (e) {} if (w) { try { w.opener = null; } catch (e) {} return true; } location.href = url; return false; },
+    open(url) { const now = Date.now(); if (now - this._last < 1500) return true; this._last = now; let w = null; try { w = window.open(url, "_blank"); } catch (e) {} if (w) { try { w.opener = null; } catch (e) {} this.goal("partner_open", { mode: "new_tab" }); return true; } this.goal("partner_open", { mode: "same_tab" }); location.href = url; return false; },
+    // Цель Метрики без исключений наружу. partner_open — факт открытия партнёра (partner_click считает только нажатие).
+    goal(name, params) { try { if (typeof ym === "function") ym(Number(YM_ID), "reachGoal", name, params || {}); } catch (e) {} },
     bankId() { const sel = document.getElementById("p-bank"); const f = document.getElementById("pform"); return (sel && sel.value) || (f && f.dataset.bankId) || "1"; },
     dobFromAge(age) { const d = new Date(); d.setMonth(d.getMonth() - 6); d.setFullYear(d.getFullYear() - age); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); },
+    // Проверено на сайте партнёра 9 сентября 2026 (подробности в seo/plan-zapuska.md):
+    //  - click_id партнёр кладёт в cookie на 30 дней в любой ссылке — по нему сверяем его кабинет с Метрикой поштучно;
+    //  - whiteLabel=true&partnerParams=true работает только для Сбербанка (bank_id=1): список цен открывается без промо-блока
+    //    «Кешбэк 100%», который стоял выше нашего обещания «от 3 900 ₽». Для других банков партнёр в любом случае ведёт на форму;
+    //  - partnerYmId по ссылке партнёр не использует (цели уходят только в его счётчик); оставлен для единообразия с виджетом.
+    clickId() { return "gdv-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8); },
     partnerUrl(bankId, debt, sex, dobISO) {
       const [y, m, d] = String(dobISO).split("-");
       const q = "bank_id=" + bankId + "&debt=" + debt + "&object_type=flat&sex=" + (sex === "f" ? "female" : "male") + "&dob=" + d + "." + m + "." + y + "&filter=all";
       const params = btoa(unescape(encodeURIComponent(q)));
-      return "https://polis812.ru/mortgage/companies?params=" + encodeURIComponent(params) + "&partnerId=" + PARTNER_ID + "&partner=" + PARTNER_ID + "&partnerYmId=" + YM_ID + "&utm_source=godovshchina&utm_medium=site&utm_campaign=" + (location.pathname.replace(/\//g, "") || "main");
+      const id = this.clickId();
+      try { if (typeof ym === "function") ym(Number(YM_ID), "params", { click_id: id, bank_id: String(bankId) }); } catch (e) {}
+      return "https://polis812.ru/mortgage/companies?params=" + encodeURIComponent(params) + (String(bankId) === "1" ? "&whiteLabel=true&partnerParams=true&type=mortgage" : "") + "&partnerId=" + PARTNER_ID + "&partner=" + PARTNER_ID + "&partnerYmId=" + YM_ID + "&click_id=" + id + "&utm_source=godovshchina&utm_medium=site&utm_campaign=" + (location.pathname.replace(/\//g, "") || "main");
     }
   };
 })();
